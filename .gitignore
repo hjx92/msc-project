@@ -1,0 +1,12 @@
+# Editor generated LaTeX files #
+################################
+
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+*.gz

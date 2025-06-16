@@ -1,0 +1,188 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{biblatex}
+\usepackage{csquotes}
+\addbibresource{references.bib}
+
+\title{A three-dimensional rail shooter in PICO-8: project proposal}
+\author{Harry Jackson}
+\date{June 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The rail shooter was one of the earliest attempts to bring video
+games into the third-dimension - first through the use of pseudo-3D
+scaling effects, and later through the use of real-time polygonal graphics.
+
+This project seeks to explore this category of interactive software through a
+modern implementation for PICO-8 - a "fantasy console" which replicates the
+computational and data constraints of historical system hardware, on which
+developers typically eschewed polygonal rendering for simpler 2D effects.
+\end{abstract}
+
+\section{Introduction}
+
+// insert picture-setting and general project introduction
+
+\subsection*{Objectives and challenges}
+
+\subsubsection*{Real-time 3D graphics in a resource-constrained system}
+The imposed limitations of the PICO-8 fantasy console - which can execute approximately four million
+virtual instructions per second, and harshly limits program length and available data in "carts" -
+are inherently challenging for 3D rendering.
+
+The coarse 128x128 pixel grid of the PICO-8 system, and its small 16-tone colour palette, also create
+challenges for the effective implementation of 3D graphics - limiting the system's native ability to
+render small polygons and to effectively model even simple lighting through flat-shading.
+
+As a result, strategies will need to be devised for (1) efficiently rendering simple polygonal
+models, (2) creating expressive polygonal models that do without complex geometry, (3) intelligently
+reducing stored geometric data by, for example, exploiting symmetry, and (4) effectively shading
+polygons through methods other than changes in RGB colour value, such as dithering.
+
+\subsubsection*{Marrying 2D and 3D graphics in a low-resolution environment}
+The game will attempt to intelligently combine 2D and 3D rendering techniques to limit
+the computational load of 3D elements, and facilitate more interesting designs that would
+be virtually impossible with a full 3D approach due to aforementioned system constraints.
+
+One of the key challenges will therefore be combining 2D and 3D rendering in a cohesive game - 
+defining a coherent relationship between 3D world space and 2D screen space for
+gameplay interactions, and effectively rendering 2D sprites at depth.
+
+\subsubsection*{Object-oriented game programming in Lua}
+The enforced programming language for the PICO-8 system is Lua, a multi-paradigm programming
+language created in 1993 by Roberto Ierusalimschy, Waldemar Celes, and Luiz Henrique de Figueiredo.
+
+The language uses objects, but it does not have the concept of a class - instead facilitating
+object-oriented programming through object prototyping and the use of shared inheritance
+from metatables.\cite{ierusalimschy} This design philosphy is explained by Ierusalimschy in his
+primer \textit{Programming in Lua}:
+
+\begin{displayquote}
+A class works as a mold for the creation of objects. Several OO languages offer the concept of class. In such languages, each object is an instance of a specific class. Lua does not have the concept of class; each object defines its own behavior and has a shape of its own.
+\end{displayquote}
+
+This language feature will demand careful adaptation of established game programming design
+patterns, which have grown out of industrial practice in the more traditionally class-based
+object-oriented \textit{lingua franca} of game development, C++.\cite{nystrom}
+
+\subsubsection*{Avoiding known genre pitfalls}
+% Common criticisms of the rail shooter genre
+Seminal works in the genre were largely used as technical showpieces, highlighting incipient
+hardware technologies like Sega's Super Scaler arcade boards, Nintendo's Super FX graphics chip, and
+new-to-market 3D consoles like the Sega Saturn and Nintendo 64.
+
+The genre fell out of favour, and saw much reduced commercial production, as 3D games became more
+common and more expansive approaches to interaction in 3D space were opened by the dawn of
+dual-analogue input.
+
+Thus, one of the core challenges of this project will be a foundational game design challenge:
+creating a game in this genre that avoids common criticisms levelled at the genre, for its
+restricted and overly scripted gameplay.
+
+\subsection*{Project scope}
+The project aims to deliver a feature-complete and content-complete game,
+sized appropriately for the chosen medium - consisting of three complete
+levels, each of which introduce unique enemy patterns, a unique boss, and
+mechanisms for successfully incrementing game challenge in a satisfying way.
+
+Because of the constraints of the PICO-8 fantasy console and the computational
+demands of 3D rendering, the game aims to run in the system's default 30Hz mode,
+rather than its optional 60Hz refresh mode.
+
+\subsection*{Motivation}
+PICO-8 is a popular platform for retro-style game development, game prototyping, and game jamming.
+3D rendering on the platform has been a persistent interest of PICO-8 enthusiasts, who have built
+rendering engines and technical demos on this theme - including rudimentary flight simulators,
+wire-frame platformers, and de-makes of popular games like \textit{Doom} and \textit{Star Fox}.
+
+This project seeks to advance beyond these exercises with a full game development project, implementing
+an original interactive game that draws on known mechanics of the genre (both from the period PICO-8 seeks
+to emulate, and beyond) and builds on top of them.
+
+Despite the known criticisms of the genre outlined above, many games of this
+class have retained an audience among retro game enthusiasts. Significant titles have been
+remade and remastered for modern systems - most notably \textit{Rez Infinite}, which has
+recently found a new home on virtual reality platforms like the Oculus Quest and PSVR2,
+where it has been well-received.
+
+% Significance of Pico-8 as prototyping tool
+\subsection*{Related work}
+Relevant related commercial software can broadly be defined
+chronologically and broken down into three categories:
+
+\begin{enumerate}
+    \item 8- and 16-bit rail shooters such as 
+    \textit{Space Harrier} (arcade, various consoles),
+    \textit{The 3-D Battles of WorldRunner} (Nintendo Entertainment System), and 
+    \textit{Star Fox} (Super Nintendo),
+    which demonstrate software built within similar constraints;
+    
+    \item Early 3D rail shooters with limited or no analogue input such as 
+    \textit{Panzer Dragoon} (Sega Saturn) and
+    \textit{Star Fox 64} (Nintendo 64),
+    which implement diverse approaches to navigating three-dimensional space with a directional-pad or
+    single analogue stick;
+    
+    \item Mature 3D rail shooters with modern gamepad inputs such as 
+    \textit{Rez} (Dreamcast, modern systems) and
+    \textit{Panzer Dragoon: Orta} (Xbox),
+    which point to non-technical design innovations that could be explored in this project.
+\end{enumerate}
+
+% Brief outline of genre and development
+
+\section{Implementation}
+\subsection*{Implementation plan}
+
+\subsection*{Choice of technology}
+% Refer to motivations already outlined
+\subsection*{Comparison to related work}
+
+% Detailed comparison of Pico-8 and industrial implementation on
+% fixed console hardware, with less constrained resources
+
+\subsection*{3D capability testing}
+% Not the correct place for this material - simply placed here for safe keeping...
+\begin{center}
+\begin{tabular}{r|c c c c c c c c c c}
+     Cubes drawn & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\
+     \hline
+     CPU utilisation & .37 & .39 & .41 & .43 & .46 & .47 & .49 & .50 & .52 & .53
+\end{tabular}
+\end{center}
+
+\section{Evaluation}
+
+\section{Time Plan}
+\subsection*{Prototyping}
+Prototyping began on May 19, following initial conversations with Dr Lapinskas. This process involved
+rudimentary paper prototyping and a naive software implementation - developing familiarity with Lua,
+sketching out the core gameplay loop, and experimenting with 3D rendering implementations. 
+
+These software prototypes consisted of (1) a fully 2D implementation of the core game,
+drawn with primitives and using naive approximations to simulate perspective,
+(2) a standalone 3D renderer drawing a cube, with rotations controlled by gamepad input,
+and (3) a 3D implementation of the core game, with previously faked elements
+now given proper positions in 3D space.
+
+\subsection*{Full implementation}
+My work plan is based around three key software development milestones:
+\begin{itemize}
+    \item \textbf{A functionally-complete game} by the end of June,
+    with appropriate software architecture\cite{nystrom}
+    and perspective-correct real-time 3D rendering\cite{gambetta};
+    \item \textbf{A content-complete game} by the end of July,
+    with three levels populated by progressively more intricate enemy, obstacle, and boss designs;
+    \item \textbf{A complete game} that is artworked and soundtracked
+    by project submission at the start of September, with much of August devoted to
+    \textbf{report writing}.
+\end{itemize}
+I do not have any planned vacation during the summer, so will be working on the
+project during weekdays for the duration of the unit.
+
+\printbibliography
+
+\end{document}
