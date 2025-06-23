@@ -1,12 +1,7 @@
 TODO NOW:
-// Set up Git and a Github repo
 // Implement player sprite and bullet in 3D world space
-// Bullet tracking for locked-on shots
-// Fix lock-on system so it requires multiple frames of lock
-// Experiment with enemy sprites
 // Develop obstacle system
 // Start to introduce scripted enemy patterns
-// Particle effects
 
 TO DO LATER:
 // Camera tilt effects?

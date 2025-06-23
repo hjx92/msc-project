@@ -28,12 +28,19 @@ function _init()
 
       update = function(self)
 
-         if (#self.enemies == 0) then self:populate_enemies() end
+         if (#self.enemies == 0) then 
+            self:populate_enemies()
+            if (player.life < 3) then
+               player.life += 1
+               sfx(5)
+            end
+         end
 
          for i = #self.enemies, 1, -1 do
             if (self.enemies[i].destroyed) then 
                add(self.enemy_particles, particles:new(self.enemies[i].x, self.enemies[i].y))
                del(self.enemies, self.enemies[i])
+               player.score += 1
                sfx(4)
             end
          end
@@ -117,6 +124,7 @@ function _draw()
    bullet_list:draw()
    player:draw()
 
-   print("rail shooter", 64, 10, 1)
+   if (player.life <= 0) then player.score = 0 end
+   print(player.score, 104, 10, 1)
 
 end

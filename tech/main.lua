@@ -84,19 +84,6 @@ function _init()
 
       end,
 
-      print = function(self)
-
-         print(self.a[1], 64, 20, 7)
-         print(self.a[2], 94, 20, 7)
-
-         print(self.b[1], 64, 30, 7)
-         print(self.b[2], 94, 30, 7)
-
-         print(self.c[1], 64, 40, 7)
-         print(self.c[2], 94, 40, 7)
-
-      end
-
    }
 
    cube = {
@@ -234,14 +221,13 @@ function _init()
       triangle_sort = function(self)
 
          sorted_tris = {}
-         starting_tris = #self.triangles
 
          for i = 1, #self.triangles do
             self.triangles[i][5] = self:triangle_depth(self.triangles[i])
             self.triangles[i][6] = self:triangle_facing(self.triangles[i])
          end
 
-         for i = 1, starting_tris do
+         for i = 1, #self.triangles do
             farthest_z = -1.1
             for i = 1, #self.triangles do
                if self.triangles[i][5] > farthest_z then

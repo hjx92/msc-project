@@ -15,21 +15,39 @@ player = {
    has_targets = false,
    targets = {},
 
+   score = 0,
+
+   model = player_ship,
+
+   lock_cooldown = 0,
+
    update = function(self)
+
+      if (self.lock_cooldown > 0) then self.lock_cooldown -= 1 end
 
       -- handle direction inputs, bounded by internal square for reticle
       if (btn(0, 0) and self.x > 16) then
          self.x -= self.speed
-         self.sprite_x -= self.sprite_speed end
+         self.sprite_x -= self.sprite_speed
+         self.model.position[1] -= 0.1
+         self.model.rotation[2] -= 0.001
+         self.model.rotation[1] += 0.002 end
       if (btn(1, 0) and self.x < 112) then
          self.x += self.speed
-         self.sprite_x += self.sprite_speed end
+         self.sprite_x += self.sprite_speed 
+         self.model.position[1] += 0.1
+         self.model.rotation[2] += 0.001
+         self.model.rotation[1] -= 0.002 end
       if (btn(2, 0) and self.y > 16) then
          self.y -= self.speed
-         self.sprite_y -= self.sprite_speed end
+         self.sprite_y -= self.sprite_speed
+         self.model.position[2] += 0.1
+         self.model.rotation[3] -= 0.001 end
       if (btn(3, 0) and self.y < 112) then
          self.y += self.speed
-         self.sprite_y += self.sprite_speed end
+         self.sprite_y += self.sprite_speed
+         self.model.position[2] -= 0.1
+         self.model.rotation[3] += 0.001 end
 
       -- handle firing inputs
       if (btn(4, 0) or btn(5, 0)) then
@@ -53,6 +71,7 @@ player = {
          end
          sfx(3)
          self.has_targets = false
+         self.lock_cooldown = 120
       end
 
 
@@ -68,6 +87,10 @@ player = {
          end
       end
 
+      if self.life <= 0 then self.score = 0 end
+
+      self.model:update()
+
    end,
 
    draw = function(self)
@@ -76,10 +99,16 @@ player = {
       line(self.x - 2, self.y, self.x + 2, self.y, 9)
       line(self.x, self.y - 2, self.x, self.y + 2, 9)
 
+      --[[
+
       -- draw player sprite
       -- rect(self.sprite_x - 4, self.sprite_y - 6, self.sprite_x + 4, self.sprite_y + 6, 10)
       pal(5, 0)
       spr(32, self.sprite_x - 16, self.sprite_y - 8, 4, 2)
+
+      ]]--
+
+      self.model:draw()
 
       -- draw lives
       for i = 1, self.life do

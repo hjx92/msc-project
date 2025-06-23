@@ -28,6 +28,17 @@ developers typically eschewed polygonal rendering for simpler 2D effects.
 
 \subsection*{Objectives and challenges}
 
+\subsubsection*{Lightweight game engine design}
+PICO-8 is a fantasy console, not a game engine. It offers basic utilities to execute a game loop -
+namely a per-frame update function, and functions to draw sprites, draw primitives, read inputs, and
+play sounds. As such, one major aspect of this project will be to implement a bespoke engine that is
+appropriate to the contraints of PICO-8, but which facilitates a rational approach to development of
+the game proper and avoid common game development pitfalls.
+
+One countervailing constraint is to avoid the temptation to implement too much - the purpose of the
+project is to develop a single game, not to create a general purpose game engine for PICO-8 that is
+extensible across a variety of game designs in diverse genres.\cite{gregory}
+
 \subsubsection*{Real-time 3D graphics in a resource-constrained system}
 The imposed limitations of the PICO-8 fantasy console - which can execute approximately four million
 virtual instructions per second, and harshly limits program length and available data in "carts" -

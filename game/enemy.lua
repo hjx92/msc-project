@@ -37,8 +37,11 @@ enemy = {
       -- WRONG: bounds checking will give false positive in corners of box, beyond perimeter of circle
       -- EXTRA WRONG: have added +/- 2 to circle radius to make lock-on more forgiving...
       if (not self.target_locked and
-          abs(player.x - self.x) < self.radius + 2 and
-          abs(player.y - self.y) < self.radius + 2 and
+          abs(player.x - self.x) < self.radius + 3 and
+          abs(player.y - self.y) < self.radius + 3 and
+          self.world_z < 6 and
+          #player.targets < 3 and
+          player.lock_cooldown <= 0 and
          (player.holding_fire)) then
             self.locking = true
             self.lock_frames -= 1
@@ -48,11 +51,11 @@ enemy = {
                self.target_locked = true
                self.flash = true
                player.has_targets = true
+               add(player.targets, self)
             end
-            add(player.targets, self)
       else 
          self.locking = false
-         self.lock_frames = 10
+         self.lock_frames = 5
       end
 
       for i = #bullet_list.bullets, 1, -1 do
