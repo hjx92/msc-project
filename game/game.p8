@@ -4,6 +4,7 @@ __lua__
 #include triangle.lua
 #include player_ship.lua
 #include player.lua
+#include enemy_group.lua
 #include enemy.lua
 #include bullet.lua
 #include floor.lua

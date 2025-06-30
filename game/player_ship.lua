@@ -34,11 +34,15 @@ player_ship = {
    rotation = {0, 0, 0},
    current_vertices = {},
    position = {0, 0, 10},
+   timer = 0,
+   flip_thruster_x = false,
+   flip_thurster_y = false,
 
    update = function(self)
 
       self:transform()
       self:triangle_sort()
+      self.timer += 1
 
    end,
 
@@ -79,12 +83,21 @@ player_ship = {
 
       x_dif = (row_ends[1][1] - row_ends[2][1]) / 3
       y_dif = (row_ends[1][2] - row_ends[2][2]) / 3
+      size = 6
+
+      if self.timer > 2 then
+         if rnd(2) < 1 then
+            self.flip_thruster_x = not self.flip_thruster_x
+         else
+            self.flip_thurster_y = not self.flip_thurster_y
+         end
+         self.timer = 0
+      end
 
       pal(9, 1)
       pal(8, 12)
       for i = 0, 3 do
-         size = rnd(3) + 6
-         sspr(24, 0, 16, 16, (thruster_x + (x_dif * i)) - (size / 2), (thruster_y + (y_dif * i)) - (size / 2), size, size)
+         sspr(24, 0, 16, 16, (thruster_x + (x_dif * i)) - (size / 2), (thruster_y + (y_dif * i)) - (size / 2), size, size, self.flip_thruster_x, self.flip_thurster_y)
       end
       pal()
 

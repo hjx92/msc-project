@@ -21,52 +21,26 @@ function _init()
 
    }
 
-   enemy_list = {
+   level = {
 
-      enemies = {},
-      enemy_particles = {},
+      enemies = enemy_group:new(),
 
       update = function(self)
 
-         if (#self.enemies == 0) then 
-            self:populate_enemies()
+         if (self.enemies.complete) then 
+            self.enemies = enemy_group:new()
             if (player.life < 3) then
                player.life += 1
                sfx(5)
             end
          end
 
-         for i = #self.enemies, 1, -1 do
-            if (self.enemies[i].destroyed) then 
-               add(self.enemy_particles, particles:new(self.enemies[i].x, self.enemies[i].y))
-               del(self.enemies, self.enemies[i])
-               player.score += 1
-               sfx(4)
-            end
-         end
-
-         for i = #self.enemy_particles, 1, - 1 do
-            if (self.enemy_particles[i].counter <= 0) then del(self.enemy_particles, self.enemy_particles[i]) end
-         end
-
-         for enemy in all(self.enemies) do enemy:update() end
-         for particles in all(self.enemy_particles) do particles:update() end
+         self.enemies:update()
 
       end,
 
       draw = function(self)
-         for particles in all(self.enemy_particles) do particles:draw() end
-         for enemy in all(self.enemies) do enemy:draw() end
-      end,
-
-      populate_enemies = function(self)
-         -- decide how many enemies to spawn
-         n = flr(rnd(7)) + 1
-         sep = 0.8 / (n + 1)
-
-         for i = 1, n do
-            add(self.enemies, enemy:new({world_x = (i * sep) - 0.4, world_y = (rnd(0.8)) - 0.4}))
-         end
+         self.enemies:draw()
       end
 
    }
@@ -104,13 +78,13 @@ function _init()
 
 end
 
-function _update60()
+function _update()
 
    player:update()
    floor:update()
    scenery:update()
    bullet_list:update()
-   enemy_list:update()
+   level:update()
 
 end
 
@@ -120,7 +94,7 @@ function _draw()
 
    floor:draw()
    scenery:draw()
-   enemy_list:draw()
+   level:draw()
    bullet_list:draw()
    player:draw()
 

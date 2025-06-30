@@ -29,6 +29,8 @@ enemy = {
    end,
 
    update = function(self)
+
+      self:subclass_update()
          
       -- expand circle until it reaches radius of 4
       if (self.world_z > 2.5) then self.world_z -= 0.05 end
@@ -37,8 +39,8 @@ enemy = {
       -- WRONG: bounds checking will give false positive in corners of box, beyond perimeter of circle
       -- EXTRA WRONG: have added +/- 2 to circle radius to make lock-on more forgiving...
       if (not self.target_locked and
-          abs(player.x - self.x) < self.radius + 3 and
-          abs(player.y - self.y) < self.radius + 3 and
+          abs(player.x - self.x) < self.radius + 5 and
+          abs(player.y - self.y) < self.radius + 5 and
           self.world_z < 6 and
           #player.targets < 3 and
           player.lock_cooldown <= 0 and

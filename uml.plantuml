@@ -1,0 +1,154 @@
+@startuml
+class main{
+init()
+update()
+draw()
+}
+
+class game_menu{
+
+}
+
+class start_menu{
+
+}
+
+class gameover_menu{
+
+}
+
+class game_world{
+sort_objects()
+draw_objects()
+}
+
+class level{
+Table[]: wave_order
+}
+
+class wave{
+init_sweep()
+init_spread()
+init_circle()
+}
+
+class player{
+Model: model
+Number: score, life
+update()
+read_input()
+draw()
+}
+
+class game_object{
+Number: x, y, z
+}
+
+class dynamic_object{
+Sprite: sprite
+}
+
+class enemy{
+update()
+check_bullet_collision()
+fire()
+destroy()
+draw()
+}
+
+class boss{
+update()
+check_bullet_collision()
+fire()
+destroy()
+draw()
+}
+
+class friendly{
+update()
+check_bullet_collision()
+draw()
+}
+
+class pickup{
+update()
+check_player_collision()
+draw()
+}
+
+class explosion{
+update()
+draw()
+}
+
+class scenery_object{
+Sprite: sprite
+update()
+initialise_tree()
+initialise_cloud()
+draw()
+}
+
+class render3d{
+Table[]: model_vertices
+Table[]: triangles
+translate()
+rotate()
+sort_triangles()
+determine_facing()
+render_triangles()
+}
+
+class project2d{
+
+}
+
+class triangle{
+y_sort()
+draw()
+}
+
+class audio_controller{
+Table[]: sound_queue
+queue_sound()
+}
+
+main *-- game_world
+main *-- game_menu
+
+game_menu *-- start_menu
+game_menu *-- gameover_menu
+
+game_world *-- level
+game_world *-- player
+game_world "1" *-- "many" scenery_object
+
+level *-- wave
+
+game_object <|-- dynamic_object
+game_object <|-- scenery_object
+game_object <|-- player
+
+wave "1" *-- "many" dynamic_object
+
+dynamic_object <|-- enemy
+dynamic_object <|-- boss
+dynamic_object <|-- friendly
+dynamic_object <|-- pickup
+dynamic_object <|-- explosion
+
+player *-- render3d
+boss *-- render3d
+
+render3d "1" *-- "many" triangle
+
+game_object --> project2d
+render3d --> project2d
+
+enemy --> audio_controller
+friendly --> audio_controller
+pickup --> audio_controller
+boss --> audio_controller
+player --> audio_controller
+wave --> audio_controller
+@enduml

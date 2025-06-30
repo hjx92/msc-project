@@ -18,8 +18,8 @@ bullet = {
          y_dist = self.target.y - self.y
          mag = sqrt(x_dist^2 + y_dist^2)
          if mag > 1 then
-            self.x += x_dist / mag
-            self.y += y_dist / mag
+            self.x += (x_dist / mag) * 2
+            self.y += (y_dist / mag) * 2
          else
             self.x += x_dist
             self.y += y_dist

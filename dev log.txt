@@ -1,0 +1,41 @@
+wc 30/06
+
+wc 23/06
+- ideation and implementation of primative enemy movement patterns
+- - "sweep" pattern
+- - "spread" pattern
+- - "circle" pattern
+- altered player_ship thruster implementation
+- start of UML class diagram
+
+wc 16/06
+- Game architecture research (Robert Nystrom, Jason Gregory)
+- 3D modelling within game prototype
+- naive score tracking and health regeneration system
+- additional sound and sprite design (health regen, player cockpit)
+- animated enemy explosion and thrusters
+- experimented with lock-on limitations (maximum enemy distance from screen, limit of three locks at once, cooldown)
+- addition of lock-on related HUD elements
+
+wc 09/06
+- rolling static scenery (clouds, forest)
+- sprite design and implementation (enemies, static scenery, 2D player sprite)
+- initial particle effects
+- initial sound design and implementation for key interactions (enemy/player firing, enemy destruction)
+
+wc 02/06
+- Project proposal drafting
+- start of translation of 2D prototype to 3D prototype (moving enemy objects into 3D world space and projecting to screen)
+- 3D prototype sanity checking (9 cubes in different world space - measuring CPU utilisation)
+
+wc 26/05
+- 3D graphics programming research (Computer Graphics from Scratch)
+- 3D prototyping (single cube)
+- modest elaboration of 2D game prototype
+- - enemy lock-on system
+
+wc 19/05
+- Initial naive 2D prototype
+- - scrolling floor (faked using naive guesswork)
+- - enemies drawn as primatives (filled circles), with z-axis movement faked by simple scaling
+- - player drawn as hollow rectangle, tied to cross-reticle

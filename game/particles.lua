@@ -25,7 +25,7 @@ particles = {
          self.parts[i][1] += self.parts[i][3]
          self.parts[i][2] += self.parts[i][4]
       end
-      new_particles.sprite_size += self.growth_rate
+      self.sprite_size += self.growth_rate
       if self.counter < 20 then self.x_flip = true end
       if self.counter < 10 then self.y_flip = true end
 
