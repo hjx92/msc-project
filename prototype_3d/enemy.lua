@@ -1,8 +1,8 @@
 enemy = {
-   
-   z = 10,
-   colour = 8,
 
+   world_z = 10,
+   radius = 0,
+   colour = 8,
    locked_colour = 2,
    target_locked = false,
    locking = false,
@@ -13,18 +13,15 @@ enemy = {
    fire_timer = 0,
    lock_frames = 3,
 
-   sprite_x = 8,
-   sprite_y = 0,
-   sprite_w = 16,
-   sprite_h = 8,
-
-   width = 0.8,
-   height = 0.4,
-   depth = 0.8,
-
    new = function(self, new_enemy)
 
       setmetatable(new_enemy, {__index = self})
+
+      y_translate = (64 - player.y) / 128
+      position = self:project_vert({new_enemy.world_x, new_enemy.world_y - y_translate, new_enemy.world_z})
+      
+      new_enemy.x = position[1]
+      new_enemy.y = position[2]
       new_enemy.time_to_fire = flr(rnd(6)) * 30 + 60
 
       return new_enemy
@@ -36,15 +33,15 @@ enemy = {
       self:subclass_update()
          
       -- expand circle until it reaches radius of 4
-      if (self.z > 4.5) then self.z -= 0.05 end
+      if (self.world_z > 2.5) then self.world_z -= 0.05 end
 
       -- check if reticle is in horizontal and vertical bounds and if targetting button is being held
       -- WRONG: bounds checking will give false positive in corners of box, beyond perimeter of circle
       -- EXTRA WRONG: have added +/- 2 to circle radius to make lock-on more forgiving...
       if (not self.target_locked and
-          abs(player.x - self.x) < self.width and
-          abs(player.y - self.y) < self.height and
-          self.z < 6 and
+          abs(player.x - self.x) < self.radius + 5 and
+          abs(player.y - self.y) < self.radius + 5 and
+          self.world_z < 6 and
           #player.targets < 3 and
           player.lock_cooldown <= 0 and
          (player.holding_fire)) then
@@ -63,13 +60,12 @@ enemy = {
          self.lock_frames = 5
       end
 
-      for i = #game_world.bullets, 1, -1 do
-         if (game_world.bullets[i].source == "player" and
-            abs(game_world.bullets[i].x - self.x) < (self.width / 2) + (game_world.bullets[i].width / 2) and
-            abs(game_world.bullets[i].y - self.y) < (self.height / 2) + (game_world.bullets[i].height / 2) and
-            abs(game_world.bullets[i].z - self.z) < (self.depth / 2)  + (game_world.bullets[i].depth / 2)) then
+      for i = #bullet_list.bullets, 1, -1 do
+         if (bullet_list.bullets[i].source == "player" and
+            abs(bullet_list.bullets[i].x - self.x) < self.radius and
+            abs(bullet_list.bullets[i].y - self.y) < self.radius) then
                self.destroyed = true
-               del(game_world.bullets, game_world.bullets[i])
+               del(bullet_list.bullets, bullet_list.bullets[i])
                break
          end
       end
@@ -92,7 +88,7 @@ enemy = {
       if (self.fire_timer > self.time_to_fire and not self.fired) then
          self.fired = true
          self.colour = 2
-         add(game_world.bullets, bullet:new(self:bullet_instructions()))
+         add(bullet_list.bullets, bullet:new(self:bullet_instructions()))
          sfx(2)
       end
       if (self.fire_timer >= 240) then
@@ -102,18 +98,20 @@ enemy = {
 
    end,
 
-   pre_draw = function(self)
+   draw = function(self)
 
+      y_translate = (64 - player.y) / 128
+      position = self:project_vert({self.world_x, self.world_y - y_translate, self.world_z})
+
+      self.x = position[1]
+      self.y = position[2]
+      self.radius = self:project_vert({self.world_x, self.world_y - 0.04 - y_translate, self.world_z})[2] - position[2]
+
+      --circfill(self.x, self.y, self.radius, self.colour)
       pal(2, self.colour)
-
-   end,
-
-   post_draw = function(self)
-      
-      pal()
-      x, y = project_vert({self.x, self.y, self.z})
-      if (self.locking) then circ(x, y, self.width + self.lock_frames * 2, player.colour) end
-      if (self.target_locked and self.flash) then circ(x, y, self.width + 2, player.colour) end
+      sspr(8, 0, 16, 8, self.x - self.radius * 4, self.y - self.radius * 2, self.radius * 8, self.radius * 4)
+      if (self.locking) then circ(self.x, self.y, self.radius + 2 + self.lock_frames * 2, player.colour) end
+      if (self.target_locked and self.flash) then circ(self.x, self.y, self.radius + 2, player.colour) end
 
    end,
 
@@ -122,14 +120,16 @@ enemy = {
       return {
          x = self.x,
          y = self.y,
-         z = self.z,
-         x_increment = (player.x - self.x) / 30,
-         y_increment = (player.y - self.y) / 30,
-         z_increment = (player.z - self.z) / 30,
+         x_increment = (player.sprite_x - self.x) / 30,
+         y_increment = (player.sprite_y - self.y) / 30,
          locked = false,
          source = "enemy"
       }
 
+   end,
+
+   project_vert = function(self, vert3)
+      return {64 + ((vert3[1] / vert3[3]) * 128), 64 - ((vert3[2] / vert3[3]) * 128)}
    end
 
 }

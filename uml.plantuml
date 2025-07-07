@@ -41,7 +41,7 @@ draw()
 }
 
 class game_object{
-Number: x, y, z
+Number: x, y, z, height, width, depth
 }
 
 class dynamic_object{

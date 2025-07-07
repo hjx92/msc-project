@@ -13,7 +13,7 @@ triangle = {
 
       new_tri:sort()
 
-      -- TO DO: handle cases where divisor is zero...
+      -- TODO: handle cases where divisor is zero...
 
       new_tri.short_inc_1 = (new_tri.b[1] - new_tri.a[1]) / (new_tri.b[2] - new_tri.a[2])
       new_tri.short_inc_2 = (new_tri.c[1] - new_tri.b[1]) / (new_tri.c[2] - new_tri.b[2])
@@ -23,8 +23,6 @@ triangle = {
    end,
 
    draw = function(self)
-
-      -- TO DO: handle additional edge cases (eg bottom points are level)
 
       x1 = self.a[1]
       x2 = self.a[1]
@@ -81,4 +79,5 @@ triangle = {
       end
 
    end
+
 }
