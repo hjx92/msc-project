@@ -7,6 +7,7 @@ function _init()
    -- tables that inherit from sprite_object
    setmetatable(scenery_object, {__index = sprite_object})
    setmetatable(enemy, {__index = sprite_object})
+   setmetatable(drone, {__index = sprite_object})
    setmetatable(explosion, {__index = sprite_object})
    setmetatable(friendly, {__index = sprite_object})
    setmetatable(pickup, {__index = sprite_object})
@@ -30,6 +31,5 @@ function _draw()
    cls(12)
    game_world:draw()
    hud:draw()
-   -- print(#game_world.scenery)
 
 end

@@ -4,13 +4,15 @@ wave = {
 
       selector = rnd(1)
 
-      if selector < 0.33 then
+      if selector < 0.16 then
          new_group = self:init_sweep()
-      else if selector < 0.66 then
+      else if selector < 0.33 then
          new_group = self:init_spread()
-      else
+      else if selector < 0.5 then
          new_group = self:init_circle()
-      end end
+      else
+         new_group = self:init_drones()
+      end end end
 
       setmetatable(new_group, {__index = self})
 
@@ -31,6 +33,12 @@ wave = {
          end
       end
 
+      for i = #self.enemies, 1, -1 do
+         if (self.enemies[i].off_screen) then 
+            del(self.enemies, self.enemies[i])
+         end
+      end
+
       for i = #self.enemy_explosion, 1, - 1 do
          if (self.enemy_explosion[i].counter <= 0) then del(self.enemy_explosion, self.enemy_explosion[i]) end
       end
@@ -38,7 +46,7 @@ wave = {
       for enemy in all(self.enemies) do enemy:update() end
       for explosion in all(self.enemy_explosion) do explosion:update() end
 
-      if #self.enemies + #self.enemy_explosion == 0 then self.complete = true end
+      if (#self.enemies + #self.enemy_explosion == 0) and self.timer >= 301 then self.complete = true end
 
    end,
 
@@ -99,6 +107,7 @@ wave = {
          enemies = {},
          enemy_explosion = {},
          complete = false,
+         timer = 301,
 
          class_update = function(self)
             return
@@ -149,6 +158,28 @@ wave = {
 
       return circle
 
+   end,
+
+   init_drones = function(self)
+
+      drones = {
+
+         timer = 0,
+         enemies = {},
+         enemy_explosion = {},
+         complete = false,
+
+         class_update = function(self)
+
+            if self.timer % 30 == 0 then add(self.enemies, drone:new(drone_template())) end
+            if self.timer <= 301 then self.timer = self.timer + 1 end
+
+         end
+
+      }
+
+      return drones
+
    end
 
 }
@@ -164,8 +195,8 @@ sweep_template = function()
             self.increment_y = self.increment_y * -1
          end
 
-         self.x = self.x + self.increment_x
-         self.y = self.y + self.increment_y
+         self.x = self.x + (self.increment_x * game_world.speed_factor)
+         self.y = self.y + (self.increment_y * game_world.speed_factor)
       end
 
    }
@@ -185,8 +216,8 @@ spread_template = function()
             self.increment_y = self.increment_y * -1
          end
 
-         self.x = self.x + self.increment_x
-         self.y = self.y + self.increment_y
+         self.x = self.x + (self.increment_x * game_world.speed_factor)
+         self.y = self.y + (self.increment_y * game_world.speed_factor)
 
       end
    
@@ -207,13 +238,26 @@ circle_template = function()
 
       subclass_update = function(self)
 
-         self.angle = self.angle + 0.005
+         self.angle = self.angle + (0.005)
          if self.angle >= 1 then self.angle = 0 end
 
          self.x = self.radius * cos(self.angle)
          self.y = self.radius * sin(self.angle)
 
       end
+
+   }
+
+   return template
+
+end
+
+drone_template = function()
+
+   template = {
+      
+      x = player.x,
+      y = player.y
 
    }
 

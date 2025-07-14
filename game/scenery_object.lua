@@ -33,6 +33,36 @@ scenery_object = {
 
    end,
 
+   new_rock = function(self)
+
+      x_rand = 5 - rnd(10)
+      h_rand = 0.2 + rnd(0.2)
+      w_rand = 0.2 + rnd(0.2)
+
+      xflip_rand = (rnd(1) > 0.5)
+
+      rock = {
+
+         x = x_rand + camera.x,
+         y = (h_rand / 2) - 2,
+         height = h_rand,
+         width = w_rand,
+
+         sprite_x = 56,
+         sprite_y = 8,
+         sprite_w = 8,
+         sprite_h = 8,
+
+         flip_x = xflip_rand,
+         flip_y = false
+
+      }
+
+      setmetatable(rock, {__index = self})
+      return rock
+
+   end,
+
    new_cloud = function(self)
 
       x_rand = 5 - rnd(10)

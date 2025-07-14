@@ -1,7 +1,7 @@
 bullet = {
 
-   width = 0.2,
-   height = 0.2,
+   width = 0.3,
+   height = 0.3,
    depth = 0.4,
    colour = 7,
    counter = 0,
@@ -23,6 +23,7 @@ bullet = {
 
       if self.locked then
          if self.target.destroyed then self.counter = 30 end
+         if self.target.off_screen then self.counter = 30 end
          x_dist = self.target.x - self.x
          y_dist = self.target.y - self.y
          z_dist = self.target.z - self.z

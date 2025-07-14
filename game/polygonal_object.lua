@@ -2,6 +2,10 @@ polygonal_object = {
    
    draw = function(self)
 
+      if self.recently_hit and (self.recently_hit_timer % 2 == 0) then
+         return
+      end
+
       self:transform()
       self:triangle_sort()
       

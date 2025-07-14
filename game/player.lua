@@ -22,6 +22,11 @@ player = {
    has_targets = false,
    targets = {},
    lock_cooldown = 0,
+   lock_cooldown_speed = 1,
+   target_limit = 1,
+
+   recently_hit = false,
+   recently_hit_timer = 0,
 
    score = 0,
    timer = 0,
@@ -114,21 +119,51 @@ player = {
          end
          sfx(3)
          self.has_targets = false
-         self.lock_cooldown = 120
+         self.lock_cooldown = 60
       end
 
 
       --TO DO: ADD "IMMUNITY" PERIOD ON BEING HIT
+      if self.recently_hit then
+         self.recently_hit_timer += 1
+         if self.recently_hit_timer > 60 then
+            self.recently_hit_timer = 0
+            self.recently_hit = false
+         end
+      end
 
       for i = #game_world.bullets, 1, -1 do
-         if (game_world.bullets[i].source == "enemy" and
+         if (game_world.bullets[i].source == "enemy" and not self.recently_hit and
             abs(game_world.bullets[i].x - self.x) < (self.width / 2) + (game_world.bullets[i].width / 2) and
             abs(game_world.bullets[i].y - self.y) < (self.height / 2) + (game_world.bullets[i].height / 2) and
             abs(game_world.bullets[i].z - self.z) < (self.depth / 2) + (game_world.bullets[i].depth / 2)) then
                if (self.life > 0) then self.life -= 1 end
+               self.recently_hit = true
                del(game_world.bullets, game_world.bullets[i])
                sfx(4)
                break
+         end
+      end
+
+      for i = #game_world.wave.enemies, 1, -1 do
+         if (not self.recently_hit and
+             abs(game_world.wave.enemies[i].x - self.x) < (self.width / 2) + (game_world.wave.enemies[i].width / 2) and
+             abs(game_world.wave.enemies[i].y - self.y) < (self.height / 2) + (game_world.wave.enemies[i].height / 2) and
+             abs(game_world.wave.enemies[i].z - self.z) < (self.depth / 2) + (game_world.wave.enemies[i].depth / 2)) then
+               if (self.life > 0) then self.life -= 1 end
+               self.recently_hit = true
+               game_world.wave.enemies[i].destroyed = true
+               sfx(4)
+         end
+      end
+
+      for i = #game_world.pickups, 1, -1 do
+         if (not self.recently_hit and
+             abs(game_world.pickups[i].x - self.x) < (self.width / 2) + (game_world.pickups[i].width / 2) and
+             abs(game_world.pickups[i].y - self.y) < (self.height / 2) + (game_world.pickups[i].height / 2) and
+             abs(game_world.pickups[i].z - self.z) < (self.depth / 2) + (game_world.pickups[i].depth / 2)) then
+               game_world.pickups[i]:execute()
+               del(game_world.pickups, game_world.pickups[i])
          end
       end
 
@@ -139,7 +174,6 @@ player = {
    pre_draw = function(self)
 
       -- DRAW RETICLE
-
       on_enemy = false
 
       for enemy in all(game_world.wave.enemies) do
@@ -152,7 +186,7 @@ player = {
       end
 
       if not on_enemy then 
-         x, y = project_vert({self.x, self.y, 15})
+         x, y = project_vert({self.x, self.y, 5})
          line(x - 1, y, x + 1, y, 9)
          line(x, y - 1, x, y + 1, 9)
       end

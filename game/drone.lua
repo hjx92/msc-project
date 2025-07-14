@@ -1,4 +1,4 @@
-enemy = {
+drone = {
    
    z = 10,
    colour = 8,
@@ -11,34 +11,38 @@ enemy = {
    target_timer = 0,
    fired = false,
    fire_timer = 0,
-   lock_frames = 3,
+   lock_frames = 2,
    off_screen = false,
 
-   sprite_x = 8,
+   timer = 0,
+
+   sprite_x = 56,
    sprite_y = 0,
    sprite_w = 16,
    sprite_h = 8,
 
-   width = 0.8,
-   height = 0.4,
-   depth = 0.8,
+   width = 0.4,
+   height = 0.2,
+   depth = 0.4,
 
-   type = "saucer",
+   type = "drone",
 
    new = function(self, new_enemy)
 
       setmetatable(new_enemy, {__index = self})
-      new_enemy.time_to_fire = flr(rnd(6)) * 30 + 60
 
       return new_enemy
 
    end,
 
    update = function(self)
-
-      self:subclass_update()
          
-      if (self.z > 4.5) then self.z -= (0.05 * game_world.speed_factor) end
+      self.z -= (0.1 * game_world.speed_factor)
+      self.timer += 1
+
+      if self.z < 2 then
+         self.off_screen = true
+      end
 
       -- check if reticle is in horizontal and vertical bounds and if targetting button is being held
       -- WRONG: bounds checking will give false positive in corners of box, beyond perimeter of circle
@@ -46,7 +50,6 @@ enemy = {
       if (not self.target_locked and
           abs(player.x - self.x) < self.width and
           abs(player.y - self.y) < self.height and
-          self.z < 8 and
           #player.targets < player.target_limit and
           player.lock_cooldown <= 0 and
          (player.holding_fire)) then
@@ -67,8 +70,8 @@ enemy = {
 
       for i = #game_world.bullets, 1, -1 do
          if (game_world.bullets[i].source == "player" and
-            abs(game_world.bullets[i].x - self.x) < (self.width / 4) + (game_world.bullets[i].width / 2) and
-            abs(game_world.bullets[i].y - self.y) < (self.height / 4) + (game_world.bullets[i].height / 2) and
+            abs(game_world.bullets[i].x - self.x) < (self.width / 2) + (game_world.bullets[i].width / 2) and
+            abs(game_world.bullets[i].y - self.y) < (self.height / 2) + (game_world.bullets[i].height / 2) and
             abs(game_world.bullets[i].z - self.z) < (self.depth / 2)  + (game_world.bullets[i].depth / 2)) then
                self.destroyed = true
                del(game_world.bullets, game_world.bullets[i])
@@ -87,60 +90,17 @@ enemy = {
          end
       end
 
-      self.fire_timer = self.fire_timer + (1 * game_world.speed_factor)
-      if (self.fire_timer > self.time_to_fire - 60 and self.fire_timer < self.time_to_fire) then
-         self.colour = 8
-      end
-      if (self.fire_timer > self.time_to_fire and not self.fired) then
-         self.fired = true
-         self.colour = 2
-         add(game_world.bullets, bullet:new(self:bullet_instructions()))
-         selector = rnd(1)
-         if selector < 0.25 then
-            bullet1 = self:bullet_instructions()
-            bullet2 = self:bullet_instructions()
-            bullet1.x_increment = bullet1.x_increment * 2
-            bullet2.x_increment = 0
-            add(game_world.bullets, bullet:new(bullet1))
-            add(game_world.bullets, bullet:new(bullet2))
-         else if selector < 0.5 then
-            bullet1 = self:bullet_instructions()
-            bullet2 = self:bullet_instructions()
-            bullet1.y_increment = bullet1.y_increment * 2
-            bullet2.y_increment = 0
-            add(game_world.bullets, bullet:new(bullet1))
-            add(game_world.bullets, bullet:new(bullet2))
-         else if selector < 0.75 then
-            bullet1 = self:bullet_instructions()
-            bullet2 = self:bullet_instructions()
-            bullet1.y_increment = bullet1.y_increment * 2
-            bullet1.x_increment = bullet1.x_increment * 2
-            bullet2.y_increment = 0
-            bullet2.x_increment = 0
-            add(game_world.bullets, bullet:new(bullet1))
-            add(game_world.bullets, bullet:new(bullet2))
-         else
-            bullet1 = self:bullet_instructions()
-            bullet2 = self:bullet_instructions()
-            bullet1.y_increment = bullet1.y_increment * 2
-            bullet1.x_increment = bullet1.x_increment * 2
-            bullet2.y_increment = 0
-            bullet2.x_increment = 0
-            add(game_world.bullets, bullet:new(bullet1))
-            add(game_world.bullets, bullet:new(bullet2))
-         end end end
-         sfx(2)
-      end
-      if (self.fire_timer >= 240) then
-         self.fired = false
-         self.fire_timer = 0
-      end
-
    end,
 
    pre_draw = function(self)
 
-      pal(2, self.colour)
+      if self.timer % 2 == 0 then
+         palt(6, true)
+      else
+         palt(7, true)
+      end
+
+      pal(5, 0)
 
    end,
 

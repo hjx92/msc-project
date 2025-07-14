@@ -2,47 +2,25 @@ game_world = {
 
    scenery = {},
    bullets = {},
+   pickups = {},
+   speed_factor = 2,
    --game_objects = {},
 
    update = function(self)
 
-      --[[
-
-      if btn(0, 0) then 
-         camera.x -= 0.1 end
-      if btn(1, 0) then 
-         camera.x += 0.1 end
-      if btn(2, 0) then 
-         camera.y += 0.1 end
-      if btn(3, 0) then 
-         camera.y -= 0.1 end
-
-      ]]--
+      if self.wave and self.wave.complete then
+         self.wave = nil
+         self.speed_factor += 0.1
+         add(self.pickups, self:new_pickup())
+      end
+      if not self.wave then self.wave = wave:new() end
+      self.wave:update()
 
       player:update()
       
-      -- update world scenery (ie spawn new clouds or trees based on chance, clean up off-screen scenery)
       self:manage_scenery()
       self:manage_bullets()
-
-      if self.wave and self.wave.complete then self.wave = nil end
-      if not self.wave then self.wave = wave:new() end
-
-      self.wave:update()
-
-      --[[
-      self.game_objects = {}
-      self:index_objects()
-
-      for i = 100, 10, -1 do
-         if self.game_objects[i] then
-            for object in all(self.game_objects[i]) do
-               object:update()
-            end
-         end
-      end
-
-      ]]--
+      self:manage_pickups()
 
    end,
 
@@ -66,6 +44,7 @@ game_world = {
       self:draw_objects(self.scenery)
       self.wave:draw()
       self:draw_objects(self.bullets)
+      self:draw_objects(self.pickups)
       player:draw()
 
    end,
@@ -73,6 +52,7 @@ game_world = {
    manage_scenery = function(self)
 
       if rnd(1.1) < 1 then add(self.scenery, scenery_object:new_tree()) end
+      if rnd(2) < 1 then add(self.scenery, scenery_object:new_rock()) end
       if rnd(5) < 1 then add(self.scenery, scenery_object:new_cloud()) end
 
       for i = #self.scenery, 1, -1 do
@@ -91,6 +71,15 @@ game_world = {
 
    end,
 
+   manage_pickups = function(self)
+
+      for i = #self.pickups, 1, -1 do
+         self.pickups[i]:update()
+         if self.pickups[i].z < 2 then del(self.pickups, self.pickups[i]) end
+      end
+
+   end,
+
    index_objects = function(self)
 
       for object in all(self.scenery) do
@@ -105,17 +94,30 @@ game_world = {
 
    update_objects = function(self, table)
 
-      for object in all(table) do
-         object:update()
+      for i = 1, #table do
+         table[i]:update()
       end
 
    end,
 
    draw_objects = function(self, table)
 
-      for object in all(table) do
-         object:draw()
+      for i = 1, #table do
+         table[i]:draw()
       end
+
+   end,
+
+   new_pickup = function(self)
+
+      selector = rnd(1)
+
+      if selector < 0.33 then
+         return pickup:new_cooldown()
+      else if selector < 0.66 then
+         return pickup:new_lock()
+      else return pickup:new_health()
+      end end
 
    end
 
