@@ -4,11 +4,11 @@ wave = {
 
       selector = rnd(1)
 
-      if selector < 0.16 then
+      if selector < 0.25 then
          new_group = self:init_sweep()
-      else if selector < 0.33 then
-         new_group = self:init_spread()
       else if selector < 0.5 then
+         new_group = self:init_spread()
+      else if selector < 0.75 then
          new_group = self:init_circle()
       else
          new_group = self:init_drones()

@@ -1,8 +1,6 @@
 TODO NOW:
-// Implement player sprite and bullet in 3D world space
-// Develop obstacle system
-// Start to introduce scripted enemy patterns
-
-TO DO LATER:
-// Camera tilt effects?
-// Boss gameplay prototype
+// Fix hit box on enemy ships
+// Improve readability of powerups
+// 3D enemy - either ship duel or shell boss
+// Dithering to create ground texture?
+// Remodel player ship

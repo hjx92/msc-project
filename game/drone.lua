@@ -40,8 +40,13 @@ drone = {
       self.z -= (0.1 * game_world.speed_factor)
       self.timer += 1
 
+      if self.z > 3 then
+         self:target_player()
+      end
+
       if self.z < 2 then
          self.off_screen = true
+         sfx(10)
       end
 
       -- check if reticle is in horizontal and vertical bounds and if targetting button is being held
@@ -125,6 +130,17 @@ drone = {
          locked = false,
          source = "enemy"
       }
+
+   end,
+
+   target_player = function(self)
+      
+      step = 4
+      
+      -- (70 / game_world.speed_factor)
+
+      self.x -= ((self.x - player.x) / step)
+      self.y -= ((self.y - player.y) / step)
 
    end
 

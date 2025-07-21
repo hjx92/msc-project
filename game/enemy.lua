@@ -14,31 +14,27 @@ enemy = {
    lock_frames = 3,
    off_screen = false,
 
-   sprite_x = 8,
+   sprite_x = 9,
    sprite_y = 0,
-   sprite_w = 16,
-   sprite_h = 8,
+   sprite_w = 14,
+   sprite_h = 7,
 
-   width = 0.8,
-   height = 0.4,
-   depth = 0.8,
+   width = 0.7,
+   height = 0.35,
+   depth = 0.7,
 
    type = "saucer",
 
    new = function(self, new_enemy)
 
       setmetatable(new_enemy, {__index = self})
-      new_enemy.time_to_fire = flr(rnd(6)) * 30 + 60
+      new_enemy.time_to_fire = flr(rnd(6)) * 15 + 30
 
       return new_enemy
 
    end,
 
    update = function(self)
-
-      self:subclass_update()
-         
-      if (self.z > 4.5) then self.z -= (0.05 * game_world.speed_factor) end
 
       -- check if reticle is in horizontal and vertical bounds and if targetting button is being held
       -- WRONG: bounds checking will give false positive in corners of box, beyond perimeter of circle
@@ -76,6 +72,9 @@ enemy = {
          end
       end
 
+      self:subclass_update()
+      if (self.z > 4.5) then self.z -= (0.05 * game_world.speed_factor) end
+
       -- control target lock flashing
       if (self.target_locked) then self.target_timer += 1 end
       if (self.target_timer == 30) then
@@ -88,7 +87,7 @@ enemy = {
       end
 
       self.fire_timer = self.fire_timer + (1 * game_world.speed_factor)
-      if (self.fire_timer > self.time_to_fire - 60 and self.fire_timer < self.time_to_fire) then
+      if (self.fire_timer > self.time_to_fire - 30 and self.fire_timer < self.time_to_fire) then
          self.colour = 8
       end
       if (self.fire_timer > self.time_to_fire and not self.fired) then
@@ -131,7 +130,7 @@ enemy = {
          end end end
          sfx(2)
       end
-      if (self.fire_timer >= 240) then
+      if (self.fire_timer >= 120) then
          self.fired = false
          self.fire_timer = 0
       end
@@ -159,9 +158,9 @@ enemy = {
          x = self.x,
          y = self.y,
          z = self.z,
-         x_increment = (player.x - self.x) / 30,
-         y_increment = (player.y - self.y) / 30,
-         z_increment = (player.z - self.z) / 30,
+         x_increment = (player.x - self.x) / (60 / game_world.speed_factor),
+         y_increment = (player.y - self.y) / (60 / game_world.speed_factor),
+         z_increment = (player.z - self.z) / (60 / game_world.speed_factor),
          locked = false,
          source = "enemy"
       }

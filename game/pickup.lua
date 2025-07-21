@@ -8,6 +8,9 @@ pickup = {
    flip_x = false,
    flip_y = false,
 
+   sprite_w = 7,
+   sprite_h = 7,
+
    new_health = function(self)
 
       x_rand = 0.5 - rnd(1)
@@ -20,8 +23,6 @@ pickup = {
 
          sprite_x = 88,
          sprite_y = 0,
-         sprite_w = 8,
-         sprite_h = 8,
 
          execute = function(self)
             if player.life < 3 then 
@@ -50,8 +51,6 @@ pickup = {
 
          sprite_x = 72,
          sprite_y = 0,
-         sprite_w = 8,
-         sprite_h = 8,
 
          execute = function(self)
             if player.target_limit < 9 then
@@ -80,8 +79,6 @@ pickup = {
 
          sprite_x = 80,
          sprite_y = 0,
-         sprite_w = 8,
-         sprite_h = 8,
 
          execute = function(self)
             if player.lock_cooldown_speed < 15 then

@@ -68,6 +68,7 @@ player = {
    flip_thruster_x = false,
    flip_thurster_y = false,
    scale = 0.25,
+   angle = 0.25,
 
    update = function(self)
 
@@ -75,25 +76,16 @@ player = {
 
       if (self.lock_cooldown > 0) then self.lock_cooldown -= 1 end
 
-      -- handle direction inputs, bounded by internal square for reticle
-      if (btn(0, 0) and self.x > -1) then
-         self.x -= self.speed
-         self.rotation[2] -= 0.001
-         self.rotation[1] += 0.002
-         camera.x -= 0.03 end
-      if (btn(1, 0) and self.x < 1) then
-         self.x += self.speed
-         self.rotation[2] += 0.001
-         self.rotation[1] -= 0.002
-         camera.x += 0.03 end
-      if (btn(2, 0) and self.y < 1) then
-         self.y += self.speed
-         self.rotation[3] -= 0.001
-         camera.y += 0.03 end
-      if (btn(3, 0) and self.y > -1) then
-         self.y -= self.speed
-         self.rotation[3] += 0.001
-         camera.y -= 0.03 end
+      -- handle direction inputs
+      if game_world.mode == "scrolling" then
+         self:input()
+      end
+
+      if game_world.mode == "boss" then
+         self:input()
+      end
+
+      self.x, self.z = self:calculate_x_z()
 
       -- handle firing inputs
       if (btn(4, 0) or btn(5, 0)) then
@@ -137,7 +129,7 @@ player = {
             abs(game_world.bullets[i].x - self.x) < (self.width / 2) + (game_world.bullets[i].width / 2) and
             abs(game_world.bullets[i].y - self.y) < (self.height / 2) + (game_world.bullets[i].height / 2) and
             abs(game_world.bullets[i].z - self.z) < (self.depth / 2) + (game_world.bullets[i].depth / 2)) then
-               if (self.life > 0) then self.life -= 1 end
+               self.life -= 1
                self.recently_hit = true
                del(game_world.bullets, game_world.bullets[i])
                sfx(4)
@@ -150,7 +142,7 @@ player = {
              abs(game_world.wave.enemies[i].x - self.x) < (self.width / 2) + (game_world.wave.enemies[i].width / 2) and
              abs(game_world.wave.enemies[i].y - self.y) < (self.height / 2) + (game_world.wave.enemies[i].height / 2) and
              abs(game_world.wave.enemies[i].z - self.z) < (self.depth / 2) + (game_world.wave.enemies[i].depth / 2)) then
-               if (self.life > 0) then self.life -= 1 end
+               self.life -= 1
                self.recently_hit = true
                game_world.wave.enemies[i].destroyed = true
                sfx(4)
@@ -166,8 +158,6 @@ player = {
                del(game_world.pickups, game_world.pickups[i])
          end
       end
-
-      if self.life <= 0 then self.score = 0 end
 
    end,
 
@@ -273,5 +263,83 @@ player = {
          source = "player"
       }
    
+   end,
+
+   scrolling_input = function(self)
+
+      if (btn(0, 0) and self.x > -1) then
+         self.angle += 0.01
+         self.rotation[2] -= 0.001
+         self.rotation[1] += 0.002
+         camera.x -= 0.03 end
+      if (btn(1, 0) and self.x < 1) then
+         self.angle -= 0.01
+         self.rotation[2] += 0.001
+         self.rotation[1] -= 0.002
+         camera.x += 0.03 end
+      if (btn(2, 0) and self.y < 1) then
+         self.y += self.speed
+         self.rotation[3] -= 0.001
+         camera.y += 0.03 end
+      if (btn(3, 0) and self.y > -1) then
+         self.y -= self.speed
+         self.rotation[3] += 0.001
+         camera.y -= 0.03 end
+
+   end,
+
+   input = function(self)
+
+      normalised_angle = self.angle - 0.25
+      diff_from_world = normalised_angle - game_world.rotation
+
+      -- MAGIC NUMBER: ~0.07 DEGREES IS THE FIELD OF VIEW OF A CAMERA WITH FOCAL LENGTH 1 AND SCREEN HEIGHT AND WIDTH OF 1
+
+      if (btn(0, 0) and diff_from_world < 0.06) then
+         self.angle += 0.005
+         self.rotation[2] -= 0.005
+         --self.rotation[1] += 0.002
+         --camera.x -= 0.03
+      end
+      if (btn(0, 0) and diff_from_world >= 0.06 and game_world.mode == "boss") then
+         self.rotation[2] -= 0.005
+         self.angle += 0.005
+         game_world.rotation += 0.005 end   
+
+
+      if (btn(1, 0) and diff_from_world > -0.06) then
+         self.angle -= 0.005
+         self.rotation[2] += 0.005
+         --self.rotation[1] -= 0.002
+         --camera.x += 0.03
+      end
+      if (btn(1, 0) and diff_from_world <= -0.06 and game_world.mode == "boss") then
+         self.rotation[2] += 0.005
+         self.angle -= 0.005
+         game_world.rotation -= 0.005 end 
+
+
+      if (btn(2, 0) and self.y < 1) then
+         self.y += self.speed
+         self.rotation[3] -= 0.001
+         camera.y += 0.03 end
+      if (btn(3, 0) and self.y > -1) then
+         self.y -= self.speed
+         self.rotation[3] += 0.001
+         camera.y -= 0.03 end
+
+   end,
+
+   calculate_x_z = function(self)
+
+      radius = 3
+
+      x = radius * cos(self.angle)
+      z = radius * sin(self.angle)
+
+      z += 5
+
+      return x, z
+
    end
 }

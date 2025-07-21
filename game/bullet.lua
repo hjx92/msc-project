@@ -10,10 +10,10 @@ bullet = {
 
       setmetatable(new_bullet, {__index = self})
 
-      new_bullet.sprite_x = 24
-      new_bullet.sprite_y = 0
-      new_bullet.sprite_w = 16
-      new_bullet.sprite_h = 16
+      new_bullet.sprite_x = 25
+      new_bullet.sprite_y = 1
+      new_bullet.sprite_w = 14
+      new_bullet.sprite_h = 14
 
       return new_bullet
 
@@ -28,7 +28,7 @@ bullet = {
          y_dist = self.target.y - self.y
          z_dist = self.target.z - self.z
          mag = sqrt(x_dist^2 + y_dist^2 + z_dist ^2)
-         if mag > 1 then
+         if mag > 0.2 then
             self.x += (x_dist / mag) / 10
             self.y += (y_dist / mag) / 10
             self.z += (z_dist / mag) / 10

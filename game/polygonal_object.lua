@@ -26,6 +26,7 @@ polygonal_object = {
 
       rotated_vertices = {}
       translated_vertices = {}
+      world_translation = {}
 
       for i = 1, #self.vertices do
          if self.scale then
@@ -41,7 +42,12 @@ polygonal_object = {
          add(translated_vertices, {rotated_vertices[i][1] + self.x, rotated_vertices[i][2] + self.y, rotated_vertices[i][3] + self.z})
       end
 
-      self.current_vertices = translated_vertices
+      for i = 1, #self.vertices do
+         x, y, z = boss_mode_rotate(translated_vertices[i], game_world.rotation)
+         add(world_translation, {x, y, z})
+      end
+
+      self.current_vertices = world_translation
 
    end,
       
