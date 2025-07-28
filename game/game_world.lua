@@ -8,7 +8,7 @@ game_world = {
    top_score = 0,
    --game_objects = {},
 
-   mode = "boss",
+   mode = "scrolling",
 
    rotation = 0,
 
@@ -35,11 +35,21 @@ game_world = {
       hline_x, hline_y = project_vert({0, -2, 15})
       rectfill(0, hline_y, 128, 128, 15)
 
+      --[[
+
       self:draw_objects(self.scenery)
       self.wave:draw()
       self:draw_objects(self.bullets)
       self:draw_objects(self.pickups)
+      boss:draw()
       player:draw()
+
+      ]]--
+
+      sorted_scene = self:sort_scene()
+      for i = #sorted_scene, 1, -1 do
+         sorted_scene[i]:draw()
+      end
 
    end,
 
@@ -75,13 +85,15 @@ game_world = {
 
    manage_scenery = function(self)
 
-      if rnd(1.1) < 1 then add(self.scenery, scenery_object:new_tree()) end
-      if rnd(2) < 1 then add(self.scenery, scenery_object:new_rock()) end
-      if rnd(5) < 1 then add(self.scenery, scenery_object:new_cloud()) end
+      if self.mode == "scrolling" then
+         if rnd(1.1) < 1 then add(self.scenery, scenery_object:new_tree()) end
+         if rnd(2) < 1 then add(self.scenery, scenery_object:new_rock()) end
+         if rnd(5) < 1 then add(self.scenery, scenery_object:new_cloud()) end
 
-      for i = #self.scenery, 1, -1 do
-         self.scenery[i]:update()
-         if self.scenery[i].z <= 0 then del(self.scenery, self.scenery[i]) end
+         for i = #self.scenery, 1, -1 do
+            self.scenery[i]:update()
+            if self.scenery[i].z <= 0 then del(self.scenery, self.scenery[i]) end
+         end
       end
 
    end,
@@ -146,6 +158,75 @@ game_world = {
       else return pickup:new_health()
       end end
 
+   end,
+
+   sort_scene = function(self)
+
+      scene = {}
+      for object in all(self.scenery) do scene[#scene + 1] = object end
+      for object in all(self.wave.enemy_explosion) do scene[#scene + 1] = object end
+      for object in all(self.wave.enemies) do scene[#scene + 1] = object end
+      for object in all(self.bullets) do scene[#scene + 1] = object end
+      for object in all(self.pickups) do scene[#scene + 1] = object end
+      -- add boss(??? should be in .wave?)
+      scene[#scene + 1] = player
+
+      for object in all(scene) do
+         x, y, z = boss_mode_rotate({object.x, object.y, object.z}, game_world.rotation)
+         object.dist = sqrt((x * x) + (y * y) + (z * z))
+      end
+
+      mergeSort(scene, 1, #scene)
+
+      return scene
+
    end
 
 }
+
+mergeSort = function(A, p, r)
+
+	if p < r then
+		local q = flr((p + r)/2)
+		mergeSort(A, p, q)
+		mergeSort(A, q+1, r)
+		merge(A, p, q, r)
+	end
+
+end
+
+-- merge an array split from p-q, q-r
+merge = function(A, p, q, r)
+
+	local n1 = q-p+1
+	local n2 = r-q
+	local left = {}
+	local right = {}
+	
+	for i=1, n1 do
+		left[i] = A[p+i-1]
+	end
+	for i=1, n2 do
+		right[i] = A[q+i]
+	end
+
+   x = {}
+   x.dist = 32767
+	
+	left[n1+1] = x
+	right[n2+1] = x
+	
+	local i=1
+	local j=1
+	
+	for k=p, r do
+		if left[i].dist<=right[j].dist then
+			A[k] = left[i]
+			i=i+1
+		else
+			A[k] = right[j]
+			j=j+1
+		end
+	end
+
+end

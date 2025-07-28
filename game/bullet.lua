@@ -1,8 +1,8 @@
 bullet = {
 
-   width = 0.3,
-   height = 0.3,
-   depth = 0.4,
+   width = 0.2,
+   height = 0.2,
+   depth = 0.2,
    colour = 7,
    counter = 0,
 

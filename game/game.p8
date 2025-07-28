@@ -12,6 +12,7 @@ __lua__
 #include game_object.lua
 #include game_world.lua
 #include hud.lua
+#include linear_algebra.lua
 #include pickup.lua
 #include player.lua
 #include polygonal_object.lua

@@ -1,6 +1,3 @@
-TODO NOW:
-// Fix hit box on enemy ships
-// Improve readability of powerups
-// 3D enemy - either ship duel or shell boss
-// Dithering to create ground texture?
-// Remodel player ship
+TODO:
+// Polyhedra
+// Get started (dip toe in) on dissertation writing

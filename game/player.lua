@@ -45,22 +45,22 @@ player = {
 
    triangles = {
       -- TOP SIDE
-      {1, 2, 5, 6},
-      {2, 6, 5, 6},
-      {1, 5, 3, 6},
-      {2, 4, 6, 6},
+      {1, 2, 5, 6, true},
+      {2, 6, 5, 6, true},
+      {1, 5, 3, 6, true},
+      {2, 4, 6, 6, true},
 
       -- BOTTOM SIDE
-      {2, 1, 7, 5},
-      {2, 7, 8, 5},
-      {1, 3, 7, 5},
-      {2, 8, 4, 5},
+      {2, 1, 7, 5, true},
+      {2, 7, 8, 5, true},
+      {1, 3, 7, 5, true},
+      {2, 8, 4, 5, true},
 
       -- REAR SIDE
-      {3, 5, 7, 6},
-      {5, 6, 7, 6},
-      {6, 8, 7, 6},
-      {6, 4, 8, 6}
+      {3, 5, 7, 6, true},
+      {5, 6, 7, 6, true},
+      {6, 8, 7, 6, true},
+      {6, 4, 8, 6, true}
    },
 
    rotation = {0, 0, 0},
@@ -77,13 +77,7 @@ player = {
       if (self.lock_cooldown > 0) then self.lock_cooldown -= 1 end
 
       -- handle direction inputs
-      if game_world.mode == "scrolling" then
-         self:input()
-      end
-
-      if game_world.mode == "boss" then
-         self:input()
-      end
+      self:input()
 
       self.x, self.z = self:calculate_x_z()
 
@@ -169,14 +163,16 @@ player = {
       for enemy in all(game_world.wave.enemies) do
          if abs(self.x - enemy.x) < (enemy.width / 2) and abs(self.y - enemy.y) < (enemy.height / 2) and not on_enemy then
             on_enemy = true
-            x, y = project_vert({enemy.x, enemy.y, enemy.z})
+            rot_x, rot_y, rot_z = boss_mode_rotate({enemy.x, enemy.y, enemy.z}, game_world.rotation)
+            x, y = project_vert({rot_x, rot_y, rot_z})
             line(x - 2, y, x + 2, y, 9)
             line(x, y - 2, x, y + 2, 9)
          end
       end
 
       if not on_enemy then 
-         x, y = project_vert({self.x, self.y, 5})
+         rot_x, rot_y, rot_z = boss_mode_rotate({self.x, self.y, self.z}, game_world.rotation)
+         x, y = project_vert({rot_x, rot_y, rot_z + 3})
          line(x - 1, y, x + 1, y, 9)
          line(x, y - 1, x, y + 1, 9)
       end
@@ -252,13 +248,17 @@ player = {
 
    bullet_instructions = function(self, locked_bool, enemy)
          
+      x_diff = 0 - self.x
+      y_diff = 0 - self.y
+      z_diff = 5 - self.z
+
       return {
          x = self.x,
          y = self.y,
          z = self.z,
-         x_increment = 0,
+         x_increment = x_diff * 0.1,
          y_increment = 0,
-         z_increment = 0.1,
+         z_increment = z_diff * 0.1,
          locked = locked_bool,
          source = "player"
       }

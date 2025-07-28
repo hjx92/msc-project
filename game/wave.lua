@@ -4,15 +4,17 @@ wave = {
 
       selector = rnd(1)
 
-      if selector < 0.25 then
+      if selector < 0.2 then
          new_group = self:init_sweep()
-      else if selector < 0.5 then
-         new_group = self:init_spread()
-      else if selector < 0.75 then
+      else if selector < 0.4 then
          new_group = self:init_circle()
-      else
+      else if selector < 0.6 then
+         new_group = self:init_boss()
+      else if selector < 0.8 then
          new_group = self:init_drones()
-      end end end
+      else
+         new_group = self:init_boss()
+      end end end end
 
       setmetatable(new_group, {__index = self})
 
@@ -97,6 +99,9 @@ wave = {
 
    end,
 
+
+   --[[
+
    init_spread = function(self)
       -- decide orientation of enemies (square? diamond? triangle?)
       -- set instructions for individual enemies
@@ -134,6 +139,8 @@ wave = {
       return spread
 
    end,
+
+   ]]--
 
    init_circle = function(self)
       -- decide direction and magnitude of spiral
@@ -180,6 +187,26 @@ wave = {
 
       return drones
 
+   end,
+
+   init_boss = function(self)
+
+      boss_wave = {
+
+         timer = 0,
+         enemies = {},
+         enemy_explosion = {},
+         complete = false,
+
+         class_update = function(self)
+         end
+
+      }
+
+      add(boss_wave.enemies, boss:new())
+
+      return boss_wave
+
    end
 
 }
@@ -203,6 +230,9 @@ sweep_template = function()
 
 end
 
+
+--[[
+
 spread_template = function()
 
    return {            
@@ -224,6 +254,8 @@ spread_template = function()
    }
 
 end
+
+]]--
 
 circle_template = function()
 

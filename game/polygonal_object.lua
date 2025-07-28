@@ -12,9 +12,16 @@ polygonal_object = {
       -- opportunity for subclasses to add effects behind polygonal model (eg player cockpit in some circumstances)
       if self.pre_draw then self:pre_draw() end
 
-      -- core polygon rendering process
+      -- draw back
       for i = 1, #self.triangles do
-         if self.triangles[i][6] then self:render_triangle(self.triangles[i]) end
+         if self.triangles[i][5] and not self.triangles[i][7] then self:render_triangle(self.triangles[i], 5) end
+      end
+
+      if self.mid_draw then self:mid_draw() end
+
+      -- draw front
+      for i = 1, #self.triangles do
+         if self.triangles[i][5] and self.triangles[i][7] then self:render_triangle(self.triangles[i], self.triangles[i][4]) end
       end
 
       -- opportunity for subclasses to add effects on top of polygonal model (eg player thrusters)
@@ -29,12 +36,8 @@ polygonal_object = {
       world_translation = {}
 
       for i = 1, #self.vertices do
-         if self.scale then
-            x = self.vertices[i][1] * self.scale
-            y = self.vertices[i][2] * self.scale
-            z = self.vertices[i][3] * self.scale
-         end
-         rVert = self:rotate({x, y, z})
+         scaled = scale(self.vertices[i], self.scale)
+         rVert = self:rotate(scaled)
          add(rotated_vertices, rVert)
       end
 
@@ -74,15 +77,15 @@ polygonal_object = {
       sorted_tris = {}
 
       for i = 1, #self.triangles do
-         self.triangles[i][5] = self:triangle_depth(self.triangles[i])
-         self.triangles[i][6] = self:triangle_facing(self.triangles[i])
+         self.triangles[i][6] = self:triangle_depth(self.triangles[i])
+         self.triangles[i][7] = self:triangle_facing(self.triangles[i])
       end
 
       for i = 1, #self.triangles do
          farthest_z = -1.1
          for i = 1, #self.triangles do
-            if self.triangles[i][5] > farthest_z then
-               farthest_z = self.triangles[i][5]
+            if self.triangles[i][6] > farthest_z then
+               farthest_z = self.triangles[i][6]
                winning_tri = self.triangles[i]
             end
          end
@@ -135,13 +138,13 @@ polygonal_object = {
 
    -- TRIANGLE RENDERING
 
-   render_triangle = function(self, current_tri)
+   render_triangle = function(self, current_tri, colour)
 
       point1x, point1y = project_vert(self.current_vertices[current_tri[1]])
       point2x, point2y = project_vert(self.current_vertices[current_tri[2]])
       point3x, point3y = project_vert(self.current_vertices[current_tri[3]])
 
-      tri = triangle:new({point1x, point1y}, {point2x, point2y}, {point3x, point3y}, current_tri[4])
+      tri = triangle:new({point1x, point1y}, {point2x, point2y}, {point3x, point3y}, colour)
       tri:draw()
 
    end
