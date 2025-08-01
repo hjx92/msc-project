@@ -62,29 +62,19 @@ enemy = {
       end
 
       for i = #game_world.bullets, 1, -1 do
-         if (game_world.bullets[i].source == "player" and
-            abs(game_world.bullets[i].x - self.x) < (self.width / 4) + (game_world.bullets[i].width / 2) and
-            abs(game_world.bullets[i].y - self.y) < (self.height / 4) + (game_world.bullets[i].height / 2) and
-            abs(game_world.bullets[i].z - self.z) < (self.depth / 2)  + (game_world.bullets[i].depth / 2)) then
-               self.destroyed = true
-               del(game_world.bullets, game_world.bullets[i])
-               break
+         if (game_world.bullets[i].source == "player" and collides(game_world.bullets[i], self)) then
+            self.destroyed = true
+            del(game_world.bullets, game_world.bullets[i])
+            break
          end
       end
 
       self:subclass_update()
+
       if (self.z > 4.5) then self.z -= (0.05 * game_world.speed_factor) end
 
       -- control target lock flashing
-      if (self.target_locked) then self.target_timer += 1 end
-      if (self.target_timer == 30) then
-         self.target_timer = 0
-         if (self.flash) then
-            self.flash = false
-         else
-            self.flash = true
-         end
-      end
+      self:control_flash()
 
       self.fire_timer = self.fire_timer + (1 * game_world.speed_factor)
       if (self.fire_timer > self.time_to_fire - 30 and self.fire_timer < self.time_to_fire) then
@@ -95,39 +85,22 @@ enemy = {
          self.colour = 2
          add(game_world.bullets, bullet:new(self:bullet_instructions()))
          selector = rnd(1)
+         bullet1 = self:bullet_instructions()
+         bullet2 = self:bullet_instructions()
          if selector < 0.25 then
-            bullet1 = self:bullet_instructions()
-            bullet2 = self:bullet_instructions()
             bullet1.x_increment = bullet1.x_increment * 2
             bullet2.x_increment = 0
-            add(game_world.bullets, bullet:new(bullet1))
-            add(game_world.bullets, bullet:new(bullet2))
          else if selector < 0.5 then
-            bullet1 = self:bullet_instructions()
-            bullet2 = self:bullet_instructions()
             bullet1.y_increment = bullet1.y_increment * 2
             bullet2.y_increment = 0
-            add(game_world.bullets, bullet:new(bullet1))
-            add(game_world.bullets, bullet:new(bullet2))
-         else if selector < 0.75 then
-            bullet1 = self:bullet_instructions()
-            bullet2 = self:bullet_instructions()
-            bullet1.y_increment = bullet1.y_increment * 2
-            bullet1.x_increment = bullet1.x_increment * 2
-            bullet2.y_increment = 0
-            bullet2.x_increment = 0
-            add(game_world.bullets, bullet:new(bullet1))
-            add(game_world.bullets, bullet:new(bullet2))
          else
-            bullet1 = self:bullet_instructions()
-            bullet2 = self:bullet_instructions()
             bullet1.y_increment = bullet1.y_increment * 2
             bullet1.x_increment = bullet1.x_increment * 2
             bullet2.y_increment = 0
             bullet2.x_increment = 0
-            add(game_world.bullets, bullet:new(bullet1))
-            add(game_world.bullets, bullet:new(bullet2))
-         end end end
+         end end
+         add(game_world.bullets, bullet:new(bullet1))
+         add(game_world.bullets, bullet:new(bullet2))
          sfx(2)
       end
       if (self.fire_timer >= 120) then

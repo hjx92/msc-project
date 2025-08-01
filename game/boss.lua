@@ -4,10 +4,6 @@ boss = {
    
       new_boss = {
 
-         x = 0,
-         y = 0,
-         z = 15,
-
          width = 3.236,
          height = 3.236,
          depth = 3.236,

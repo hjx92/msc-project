@@ -74,10 +74,7 @@ drone = {
       end
 
       for i = #game_world.bullets, 1, -1 do
-         if (game_world.bullets[i].source == "player" and
-            abs(game_world.bullets[i].x - self.x) < (self.width / 2) + (game_world.bullets[i].width / 2) and
-            abs(game_world.bullets[i].y - self.y) < (self.height / 2) + (game_world.bullets[i].height / 2) and
-            abs(game_world.bullets[i].z - self.z) < (self.depth / 2)  + (game_world.bullets[i].depth / 2)) then
+         if (game_world.bullets[i].source == "player" and collides(game_world.bullets[i], self)) then
                self.destroyed = true
                del(game_world.bullets, game_world.bullets[i])
                break
@@ -85,15 +82,7 @@ drone = {
       end
 
       -- control target lock flashing
-      if (self.target_locked) then self.target_timer += 1 end
-      if (self.target_timer == 30) then
-         self.target_timer = 0
-         if (self.flash) then
-            self.flash = false
-         else
-            self.flash = true
-         end
-      end
+      self:control_flash()
 
    end,
 

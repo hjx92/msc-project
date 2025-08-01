@@ -5,6 +5,7 @@ __lua__
 #include boss.lua
 #include bullet.lua
 #include camera.lua
+#include collision.lua
 #include drone.lua
 #include enemy.lua
 #include explosion.lua

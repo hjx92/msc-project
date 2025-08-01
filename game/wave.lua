@@ -99,9 +99,6 @@ wave = {
 
    end,
 
-
-   --[[
-
    init_spread = function(self)
       -- decide orientation of enemies (square? diamond? triangle?)
       -- set instructions for individual enemies
@@ -139,8 +136,6 @@ wave = {
       return spread
 
    end,
-
-   ]]--
 
    init_circle = function(self)
       -- decide direction and magnitude of spiral
@@ -230,9 +225,6 @@ sweep_template = function()
 
 end
 
-
---[[
-
 spread_template = function()
 
    return {            
@@ -254,8 +246,6 @@ spread_template = function()
    }
 
 end
-
-]]--
 
 circle_template = function()
 

@@ -119,10 +119,7 @@ player = {
       end
 
       for i = #game_world.bullets, 1, -1 do
-         if (game_world.bullets[i].source == "enemy" and not self.recently_hit and
-            abs(game_world.bullets[i].x - self.x) < (self.width / 2) + (game_world.bullets[i].width / 2) and
-            abs(game_world.bullets[i].y - self.y) < (self.height / 2) + (game_world.bullets[i].height / 2) and
-            abs(game_world.bullets[i].z - self.z) < (self.depth / 2) + (game_world.bullets[i].depth / 2)) then
+         if (game_world.bullets[i].source == "enemy" and not self.recently_hit and collides(game_world.bullets[i], self)) then
                self.life -= 1
                self.recently_hit = true
                del(game_world.bullets, game_world.bullets[i])
@@ -132,10 +129,7 @@ player = {
       end
 
       for i = #game_world.wave.enemies, 1, -1 do
-         if (not self.recently_hit and
-             abs(game_world.wave.enemies[i].x - self.x) < (self.width / 2) + (game_world.wave.enemies[i].width / 2) and
-             abs(game_world.wave.enemies[i].y - self.y) < (self.height / 2) + (game_world.wave.enemies[i].height / 2) and
-             abs(game_world.wave.enemies[i].z - self.z) < (self.depth / 2) + (game_world.wave.enemies[i].depth / 2)) then
+         if (not self.recently_hit and collides(game_world.wave.enemies[i], self)) then
                self.life -= 1
                self.recently_hit = true
                game_world.wave.enemies[i].destroyed = true
@@ -144,10 +138,7 @@ player = {
       end
 
       for i = #game_world.pickups, 1, -1 do
-         if (not self.recently_hit and
-             abs(game_world.pickups[i].x - self.x) < (self.width / 2) + (game_world.pickups[i].width / 2) and
-             abs(game_world.pickups[i].y - self.y) < (self.height / 2) + (game_world.pickups[i].height / 2) and
-             abs(game_world.pickups[i].z - self.z) < (self.depth / 2) + (game_world.pickups[i].depth / 2)) then
+         if (not self.recently_hit and collides(game_world.pickups[i], self)) then
                game_world.pickups[i]:execute()
                del(game_world.pickups, game_world.pickups[i])
          end
@@ -246,7 +237,7 @@ player = {
 
    end,
 
-   bullet_instructions = function(self, locked_bool, enemy)
+   bullet_instructions = function(self, locked_bool)
          
       x_diff = 0 - self.x
       y_diff = 0 - self.y

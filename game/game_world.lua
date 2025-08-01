@@ -187,10 +187,12 @@ game_world = {
 mergeSort = function(A, p, r)
 
 	if p < r then
+
 		local q = flr((p + r)/2)
 		mergeSort(A, p, q)
 		mergeSort(A, q+1, r)
 		merge(A, p, q, r)
+      
 	end
 
 end

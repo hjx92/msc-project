@@ -17,7 +17,7 @@ games into the third-dimension - first through the use of pseudo-3D
 scaling effects, and later through the use of real-time polygonal graphics.
 
 This project seeks to explore this category of interactive software through a
-modern implementation for PICO-8 - a "fantasy console" which replicates the
+modern implementation for PICO-8 - a ``fantasy console" which replicates the
 computational and data constraints of historical system hardware, on which
 developers typically eschewed polygonal rendering for simpler 2D effects.
 \end{abstract}
@@ -41,7 +41,7 @@ extensible across a variety of game designs in diverse genres.\cite{gregory}
 
 \subsubsection*{Real-time 3D graphics in a resource-constrained system}
 The imposed limitations of the PICO-8 fantasy console - which can execute approximately four million
-virtual instructions per second, and harshly limits program length and available data in "carts" -
+virtual instructions per second, and harshly limits program length and available data in ``carts" -
 are inherently challenging for 3D rendering.
 
 The coarse 128x128 pixel grid of the PICO-8 system, and its small 16-tone colour palette, also create
@@ -52,6 +52,23 @@ As a result, strategies will need to be devised for (1) efficiently rendering si
 models, (2) creating expressive polygonal models that do without complex geometry, (3) intelligently
 reducing stored geometric data by, for example, exploiting symmetry, and (4) effectively shading
 polygons through methods other than changes in RGB colour value, such as dithering.
+
+\cite{akenine-möller-etal}
+
+\subsubsection*{Collision detection}
+\cite{ericson}
+
+\subsubsection*{Irregular collisions}
+The inclusion of a real-time three-dimensional boss with interactable geometry called for a second
+and more specialised collision detection system, checking for intersections between triangular faces
+in 3D space and rays defining the motion of projectiles, rather than simple checks for overlapping
+bounding volumes.
+
+Such an approach was required to execute the design of a boss enmeshed in a three-dimensional protective
+shell - a regular icosahedron - which the player must destroy by strafing in a circular motion to
+identify and successfully shoot weak points under time constraint.
+
+To achieve this, I made use of the Möller–Trumbore ray-triangle intersection algorithm.\cite{möller–trumbore}
 
 \subsubsection*{Marrying 2D and 3D graphics in a low-resolution environment}
 The game will attempt to intelligently combine 2D and 3D rendering techniques to limit

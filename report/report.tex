@@ -1,0 +1,221 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{biblatex}
+\usepackage{csquotes}
+\addbibresource{references.bib}
+\renewcommand{\abstractname}{Executive Summary}
+
+\title{A three-dimensional rail shooter in PICO-8}
+\author{Harry Jackson}
+\date{September 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The rail shooter was one of the earliest attempts to bring video
+games into the third-dimension - first through the use of pseudo-3D
+scaling effects, and later through the use of real-time polygonal graphics.
+
+This project seeks to explore this category of interactive software through a
+modern implementation incorportating polygonal rendering for PICO-8 - a
+``fantasy console'' which replicates the computational and data constraints of
+historical system hardware on which developers typically eschewed polygonal
+rendering for simpler 2D effects.
+\end{abstract}
+
+\section*{Acknowledgements}
+
+\tableofcontents
+
+\section{Introduction, aims, and objectives}
+[To be outlined and written after composition of rest of main body]
+
+
+\section{Background and context}
+
+\subsection{Genre background}
+\subsubsection*{Historical outline}
+Give broad overview of significance of rail shooters in the development of approaches
+to 3D game design and chart their development with a focus on:
+\begin{itemize}
+   \item\textit{Space Harrier} and the 2D Super Scaler approach;
+   \item\textit{Star Fox} as an exemplar for 16-bit polygonal 3D with
+   cartridge storage limitations;
+   \item\textit{Panzer Dragoon} as a 32-bit polygonal 3D game on optical media;
+   \item and \textit{Rez} as a mature rail shooter with continued life in VR and
+   ongoing aesthetic significance.
+\end{itemize}
+\subsubsection*{Gameplay taxonomy}
+Describe the basic structure of a 3D rail shooter with reference to the above examples,
+outlining their various approaches to core gameplay elements like enemy design, player
+movement, shooting and targetting, significant action set-pieces, and their use of
+fixed perspective or a malleable 3D camera.
+\subsubsection*{Genre pitfalls}
+Evidence common criticisms of 3D rail shooters as ``glorified technical demos'' with
+limited room for gameplay innovation and discuss their waning significance in
+commercial game design - with appropriate counter-examples of cult following for
+balance.
+
+\subsection{PICO-8}
+\subsubsection*{Introduction to PICO-8}
+Discuss ethos of PICO-8 as a ``fantasy console'' and outline its technical
+specification - emphasis on compute power, memory limitations, screen resolution,
+player inputs, and token limits - and indicate some of the implications of these
+constraints on project scope.
+\subsubsection*{PICO-8 as prototyping tool}
+Discuss benefits of using PICO-8 as a tool for rapid creation and iteration of
+game prototypes, compare and contrast to full 3D engines like Unity, Godot and Unreal,
+describe suitability given fixed time constraints of an individual summer
+project, and point to games successfully prototyped in PICO-8 (most notably
+\textit{Celeste}).
+\subsubsection*{Sprite-scaling functionality}
+Discuss PICO-8's given functionality for sprite drawing and scaling and explain how
+these would facilitate development of a low-fidelity game utilising a pseudo-3D
+Super Scaler approach.
+
+Discuss \textit{Star Fox} as exemplar polygonal rail shooter built within similar
+constraints and make critical comparison between PICO-8 platform specification and
+the Super Nintendo with on-cartridge Super FX graphics chip.
+
+Discuss extensibility of
+PICO-8's functions for drawing primitives (eg rectfill and line) for triangle
+rasterisation and polygonal rendering.
+\subsubsection*{3D experimentation in PICO-8}
+Broad overview of existing experimentation with polygonal 3D in PICO-8 with a
+focus on \textit{PICO-Fox} as closest analogue. 
+
+Discuss exposed limitations of approach - particularly heavy cost of geometry data
+for 3D models, and limitations imposed on design by use of polygonal enemies as
+standard (ie minimum size constraint forced by low readability of small 3D models
+on a coarse pixel grid).
+\subsubsection*{Mitigation strategies for constraints}
+Discuss apparent mitigation stategies to work effectively with PICO-8 in light of
+the known constraints of the system. Emphasis on:
+\begin{itemize}
+   \item aggressive use of OOP to eliminate code dupication and preserve token count;
+   \item use of standard 30Hz display mode rather than higher-refresh 60Hz mode, to
+   trivially double frame budget when drawing and manipulating 3D models;
+   \item a blended 2D/3D approach that reserves polygonal rendering for the player
+   sprite and for boss encounters, and allows the flexibility and low cost of
+   sprite-based gameplay throughout the rest of the core gameplay loop;
+   \item possible growth into a ``multicart'' game, in violation of a basic intended
+   constraint of the system, as a last resort to deal with token limits.
+\end{itemize}
+
+
+\section{Implementation}
+
+\subsection{Paper prototyping, software prototyping, and 3D rendering test}
+\subsubsection*{Basic player actions using primatives}
+Referring back to the gameplay taxonomy conducted in the background section, explain
+how the most significant user actions were distilled down to fit a six-input
+gamepad. Showcase how this was modelled using a flat paper prototype and outline
+how this was translated into a software prototype using primitive shapes to model
+the player and randomly spawned enemies, with movement and interactions being
+directly translated into screen-space.
+
+Highlight issues already identified at this early stage of prototyping - such as
+player model blocking, the relationship between the player reticle and the destination
+of projectiles in hypothecated 3D space, the need for limitations on enemy
+target locking, and the need for game objects to have a meaningful existence in 3D
+space.
+\subsubsection*{Simple 3D renderer with model scaling and rotations}
+Describe the contruction of a simple 3D renderer to prove suitability of PICO-8 for
+the proposed project. Expose and discuss my implementation of triangle rasterisation
+in PICO-8 and briefly explain the benefits of decomposing 3D shapes into triangles
+rather than quads. Discuss related issues in polygonal rendering such as triangle
+sorting and backface culling.
+
+Showcase the results of the ``sanity test'', in which multiple
+cubes are drawn to the screen progressively in order to understand the relative
+computational cost of tracking and drawing 3D geometry in PICO-8 and the feasibility
+of real-time polygonal rendering given system constraints and my existing quality
+of implementation.
+
+\subsection{3D conversion of software prototype}
+\subsubsection*{Perspective-correct 3D projection and scaling}
+Discuss the application of 3D point projection to the corners of 2D sprite objects
+to achieve perspective correct drawing and scaling of 2D elements using PICO-8's sspr
+function. Highlight use of small camera movements (spatial displacement in x and y)
+aligned to player sprite movement to heighten illusion of depth along the z-axis.
+\subsubsection*{Real-time 3D collisions}
+Discuss implementation of cuboid bounding volumes to test for collisions, using
+height, width, and depth data paired if three-dimensional positions to check for
+intersection of volumes. Discuss the need for axis-alignment to significantly
+simplify calculations, and the design implications of this with regard to rotational
+symmetry of objects depicted (ie disc-shaped saucers, and spherical projectiles)
+\subsubsection*{Graphical effects with 2D sprites and particles}
+Describe the implementation of 2D sprites to replace primitive shapes used in earlier
+iterations of the prototype. Discuss the design considerations that led to the
+adoption of easily identifiable flying saucer and drone designs. Discuss simple
+graphical effects used to eg light up flying saucer lights, or spin rotors of
+enemy drones. Explain implementation of enemy destruction effects - namely the
+implementation of a simple particle system over the bed of an explosion animation
+efficiently faked by a combination of progressive scaling and random flipping of a
+non-symmetrical sprite.
+
+\subsection{Full implementation}
+\subsubsection*{Settled software architecture and object heirarchy}
+Discuss the software architecture and walk through the significant parts of the
+class diagram that was drafted at the end of software prototyping. Explain how the
+design was informed by prototyping and broader game systems architecture reading.
+Describe how game flow is controlled within the architecture. Descibe how game object
+subclassing of sprite objects and polygonal objects facilitates the blended
+2D/3D rendering approach outlined earlier in a polymorphic way. 
+\subsubsection*{The game loop}
+Describe the core gameplay loop and give a comprehensive tour of the update and draw
+functions in main.lua that execute it, explaining the rationale for event and draw
+sequencing. Discuss the z-sort implementation in draw, comparing to alternative sorting
+algortithms, and describe how polymorphic class design enables heterogeneous elements
+to be drawn together in the correct depth ordering.
+\subsubsection*{Camera rotations in 3D space}
+Discuss the implementation of camera rotations around a point in 3D space for the
+creation of a ``boss mode'' which involves strafing around a polygonal enemy. Highlight
+the implications of this change on the position and orientation of the player model,
+which can no longer exist naively in a 2D plane facing along the z-axis but which
+must now be able to exist in a rotational relationship to a focal point in the map,
+shared with the camera. Discuss the relationship between in-frame player movement,
+the implied field of view of a 1x1 canvas at single unit distance from pinhole, and
+camera rotation around a point. Discuss the per-object rotations required to execute
+such camera movements, density of spawned scenery, and concerns around computational
+load.
+\subsubsection*{Ray-triangle collisions with the Möller–Trumbore algorithm}
+Discuss the need for more complex ray-triangle intersection computations to effectively
+test for collisions around the boss enemy, since the intended design requires per-face
+collision detection on a regular icosahedron whose faces cannot be satisfactorily
+split into non-overlapping cuboid bounding volumes that adequately approximate
+collisions.
+
+\section{Results}
+\subsection{Think-aloud testing feedback}
+Discuss feedback gathered by think-aloud testing sessions, and highlight adaptations
+to the software intended to answer constructive criticisms. Possible subjects of
+discussion:
+\begin{itemize}
+   \item implementation of on-player HUD to answer lack of player attention on vital
+   gameplay statistics, ie remaining life and state of lock-on targetting;
+   \item redesign of pick-up sprites to better differentiate power-ups from
+   damage-inducing projectiles;
+   \item introduction of narrative splash screen to justify on-screen action, which
+   was seen as random and unexplained.
+\end{itemize}
+Also discuss positive feedback gathered during sessions, such as satisfaction
+with the game controls, hit detection, and overall aesthetic of the game, and comfort
+with depth perception despite the low-resolution pixel grid.
+\subsection{Formal NASA-TLX testing}
+TBD
+
+
+\section{Evaluation}
+
+
+\section{Further work}
+
+
+\section{Conclusion}
+[To be outlined and written after composition of rest of main body]
+
+\printbibliography
+
+\end{document}

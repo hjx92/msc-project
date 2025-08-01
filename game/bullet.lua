@@ -22,8 +22,7 @@ bullet = {
    update = function(self)
 
       if self.locked then
-         if self.target.destroyed then self.counter = 30 end
-         if self.target.off_screen then self.counter = 30 end
+         if self.target.destroyed or self.target.off_screen then self.counter = 30 end
          x_dist = self.target.x - self.x
          y_dist = self.target.y - self.y
          z_dist = self.target.z - self.z

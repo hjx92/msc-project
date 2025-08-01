@@ -53,6 +53,20 @@ sprite_object = {
 
       if self.post_draw then self:post_draw() end
 
+   end,
+
+   control_flash = function(self)
+
+      if (self.target_locked) then self.target_timer += 1 end
+      if (self.target_timer == 30) then
+         self.target_timer = 0
+         if (self.flash) then
+            self.flash = false
+         else
+            self.flash = true
+         end
+      end
+
    end
 
 }
