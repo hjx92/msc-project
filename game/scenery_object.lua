@@ -1,6 +1,5 @@
 scenery_object = {
 
-   undulating = false,
    scroll_speed = 0.2,
 
    new_tree = function(self)
@@ -13,21 +12,19 @@ scenery_object = {
 
       tree = {
 
+         type = "tree",
+
          x = x_rand + camera.x,
          y = (h_rand / 2) - 2,
          height = h_rand,
          width = w_rand,
-
-         sprite_x = 0,
-         sprite_y = 0,
-         sprite_w = 8,
-         sprite_h = 16,
 
          flip_x = xflip_rand,
          flip_y = false
 
       }
 
+      assign_tree(tree)
       setmetatable(tree, {__index = self})
       return tree
 
@@ -43,21 +40,19 @@ scenery_object = {
 
       rock = {
 
+         type = "rock",
+
          x = x_rand + camera.x,
          y = (h_rand / 2) - 2,
          height = h_rand,
          width = w_rand,
-
-         sprite_x = 56,
-         sprite_y = 8,
-         sprite_w = 8,
-         sprite_h = 8,
 
          flip_x = xflip_rand,
          flip_y = false
 
       }
 
+      assign_rock(rock)
       setmetatable(rock, {__index = self})
       return rock
 
@@ -75,6 +70,8 @@ scenery_object = {
 
       cloud = {
 
+         type = "cloud",
+
          x = x_rand + camera.x,
          y = 4 + y_rand,
          height = h_rand,
@@ -90,31 +87,53 @@ scenery_object = {
 
       }
 
+      assign_cloud(cloud)
       setmetatable(cloud, {__index = self})
       return cloud
 
    end,
 
-   new_wave = function(self)
+   load = function(self, item)
 
-      wave = {
-         undulating = true,
-      }
+      if item.type == "tree" then assign_tree(item) end
+      if item.type == "rock" then assign_rock(item) end
+      if item.type == "cloud" then assign_cloud(item) end
 
-      setmetatable(wave, {__index = self})
-      return wave
+      setmetatable(item, {__index = self})
+      return item
 
    end,
 
    update = function(self)
       
       self.z -= self.scroll_speed
-      if self.undulating then
-         self:undulate()
-      end
 
    end,
-
-   undulate = function(self)
-   end
 }
+
+assign_tree = function(item)
+
+   item.sprite_x = 0
+   item.sprite_y = 0
+   item.sprite_w = 8
+   item.sprite_h = 16
+
+end
+
+assign_rock = function(item)
+
+   item.sprite_x = 56
+   item.sprite_y = 8
+   item.sprite_w = 8
+   item.sprite_h = 8
+
+end
+
+assign_cloud = function(item)
+
+   item.sprite_x = 8
+   item.sprite_y = 8
+   item.sprite_w = 16
+   item.sprite_h = 8
+
+end

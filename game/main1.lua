@@ -1,3 +1,6 @@
+shoot_scale = 2
+speed_scale = 1
+
 function _init()
 
    cartdata("rail_shooter")
@@ -17,9 +20,6 @@ function _init()
 
    -- tables that inherit from polygonal_object
    setmetatable(player, {__index = polygonal_object})
-
-   shoot_scale = 1
-   speed_scale = 1
 
 end
 

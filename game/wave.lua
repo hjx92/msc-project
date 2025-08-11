@@ -4,17 +4,15 @@ wave = {
 
       selector = rnd(1)
 
-      if selector < 0.2 then
+      if flr(game_world.waves) % 4 == 0 then
          new_group = self:init_sweep()
-      else if selector < 0.4 then
-         new_group = self:init_circle()
-      else if selector < 0.6 then
-         new_group = self:init_boss()
-      else if selector < 0.8 then
+      else if flr(game_world.waves) % 3 == 0 then
          new_group = self:init_drones()
+      else if flr(game_world.waves) % 2 == 0 then
+         new_group = self:init_circle()
       else
-         new_group = self:init_boss()
-      end end end end
+         new_group = self:init_spread()
+      end end end
 
       setmetatable(new_group, {__index = self})
 
@@ -182,26 +180,6 @@ wave = {
 
       return drones
 
-   end,
-
-   init_boss = function(self)
-
-      boss_wave = {
-
-         timer = 0,
-         enemies = {},
-         enemy_explosion = {},
-         complete = false,
-
-         class_update = function(self)
-         end
-
-      }
-
-      add(boss_wave.enemies, boss:new())
-
-      return boss_wave
-
    end
 
 }
@@ -217,8 +195,8 @@ sweep_template = function()
             self.increment_y = self.increment_y * -1
          end
 
-         self.x = self.x + (self.increment_x * game_world.speed_factor)
-         self.y = self.y + (self.increment_y * game_world.speed_factor)
+         self.x = self.x + (self.increment_x * game_world.speed_factor * speed_scale)
+         self.y = self.y + (self.increment_y * game_world.speed_factor * speed_scale)
       end
 
    }
@@ -238,8 +216,8 @@ spread_template = function()
             self.increment_y = self.increment_y * -1
          end
 
-         self.x = self.x + (self.increment_x * game_world.speed_factor)
-         self.y = self.y + (self.increment_y * game_world.speed_factor)
+         self.x = self.x + (self.increment_x * game_world.speed_factor * speed_scale)
+         self.y = self.y + (self.increment_y * game_world.speed_factor * speed_scale)
 
       end
    

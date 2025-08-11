@@ -50,6 +50,9 @@ hud = {
       print("current score:", 10, 22, 0)
       print(player.score, 68, 22, 0)
 
+      print("wave", 10, 118, 0)
+      print(game_world.waves, 30, 118, 0)
+
    end
 
 }

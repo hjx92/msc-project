@@ -37,7 +37,7 @@ drone = {
 
    update = function(self)
          
-      self.z -= (0.1 * game_world.speed_factor)
+      self.z -= (0.1 * game_world.speed_factor * speed_scale)
       self.timer += 1
 
       if self.z > 3 then

@@ -12,6 +12,11 @@ boss = {
 
          rotation = {0, 0, 0},
 
+         timer = 0,
+
+         available_faces = 20,
+         face_nominated = false,
+
          -- define regular icosahedron
          vertices = {
 
@@ -37,37 +42,43 @@ boss = {
 
          triangles = {
 
-            {1, 2, 3, 6, true},
-            {1, 4, 2, 6, true},
+            {1, 2, 3},
+            {1, 4, 2},
 
-            {1, 6, 4, 6, true},
-            {1, 5, 6, 6, true},
-            {1, 3, 5, 6, true},
+            {1, 6, 4},
+            {1, 5, 6},
+            {1, 3, 5},
 
-            {2, 4, 8, 6, true},
-            {2, 8, 7, 6, true},
-            {2, 7, 3, 6, true},
+            {2, 4, 8},
+            {2, 8, 7},
+            {2, 7, 3},
 
-            {4, 6, 10, 6, false},
-            {4, 10, 8, 6, true},
+            {4, 6, 10},
+            {4, 10, 8},
 
-            {3, 7, 9, 6, true},
-            {3, 9, 5, 6, true},
+            {3, 7, 9},
+            {3, 9, 5},
 
-            {11, 10, 6, 6, true},
-            {11, 6, 5, 6, true},
-            {11, 5, 9, 6, true},
+            {11, 10, 6},
+            {11, 6, 5},
+            {11, 5, 9},
 
-            {12, 8, 10, 6, true},
-            {12, 7, 8, 6, true},
-            {12, 9, 7, 6, true},
+            {12, 8, 10},
+            {12, 7, 8},
+            {12, 9, 7},
 
-            {11, 12, 10, 6, true},
-            {11, 9, 12, 6, true}
+            {11, 12, 10},
+            {11, 9, 12}
 
          }
 
       }
+
+      for triangle in all(new_boss.triangles) do
+         triangle[4] = 6
+         triangle[5] = true
+         triangle[8] = false
+      end
 
       setmetatable(new_boss, {__index = self})
 
@@ -81,18 +92,45 @@ boss = {
       else game_world.mode = "boss"
       end
 
+      if not self.face_nominated then self:nominate_face() end
+
+      self:transform()
+
       for i = #self.triangles, 1, -1 do
          for j = #game_world.bullets, 1, -1 do
-            if self.triangles[i][5] then
-               if self:bullet_triangle_intersect(game_world.bullets[j], self.triangles[i]) then
-                  self.triangles[i][5] = false
-                  add(game_world.wave.enemy_explosion, explosion:new(game_world.bullets[j].x, game_world.bullets[j].y, game_world.bullets[j].z))
-                  del(game_world.bullets, game_world.bullets[j])
-                  sfx(4)
+            if self.triangles[i][5] and game_world.bullets[j].source == "player" then
+               if self.triangles[i][8] then
+                  if self:bullet_triangle_intersect(game_world.bullets[j], self.triangles[i]) then
+                     self.triangles[i][5] = false
+                     self.face_nominated = false
+                     self.available_faces -= 1
+                     add(game_world.wave.enemy_explosion, explosion:new(game_world.bullets[j].x, game_world.bullets[j].y, game_world.bullets[j].z))
+                     del(game_world.bullets, game_world.bullets[j])
+                     sfx(4)
+                  end
+               else
+                  if self:bullet_triangle_intersect(game_world.bullets[j], self.triangles[i]) then
+                     game_world.bullets[j].source = "enemy"
+                     game_world.bullets[j].x_increment *= -1
+                     game_world.bullets[j].y_increment *= -1
+                     game_world.bullets[j].z_increment *= -1
+                     game_world.bullets[j].x += game_world.bullets[j].x_increment
+                     game_world.bullets[j].y += game_world.bullets[j].y_increment
+                     game_world.bullets[j].z += game_world.bullets[j].z_increment
+                     sfx(4)
+                  end
                end
             end
          end
       end
+
+      if self.timer < 301 then self.timer += 1
+      else self.timer = 0 end
+
+      if self.timer < 100 then self.rotation[1] += 0.01
+      else if self.timer < 200 then self.rotation[2] += 0.01
+      else self.rotation[3] += 0.01
+      end end
 
    end,
 
@@ -101,9 +139,9 @@ boss = {
 
       epsilon = 0.0001
 
-      vert0 = addition(scale(self.vertices[triangle[1]], self.scale), {self.x, self.y, self.z})
-      vert1 = addition(scale(self.vertices[triangle[2]], self.scale), {self.x, self.y, self.z})
-      vert2 = addition(scale(self.vertices[triangle[3]], self.scale), {self.x, self.y, self.z})
+      vert0 = self.current_vertices[triangle[1]]
+      vert1 = self.current_vertices[triangle[2]]
+      vert2 = self.current_vertices[triangle[3]]
 
       edge1 = subtract(vert1, vert0)
       edge2 = subtract(vert2, vert0)
@@ -130,4 +168,24 @@ boss = {
       if t <= 1 then return true else return false end
 
    end,
+
+   nominate_face = function(self)
+
+      num = flr(rnd(self.available_faces - 1)) + 1
+      count = 1
+
+      for i = 1, #self.triangles do
+         if self.triangles[i][5] then
+            if num == count then
+               self.triangles[i][4] = 13
+               self.triangles[i][8] = true
+               count += 1
+               self.face_nominated = true
+            else
+               count += 1
+            end
+         end
+      end
+
+   end
 }

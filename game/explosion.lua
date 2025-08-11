@@ -24,20 +24,20 @@ explosion = {
 
    end,
 
-   update = function(self)
+   update = function(_ENV)
 
-      self.counter -= 1
+      counter -= 1
 
-      for i = 1, #self.parts do
-         self.parts[i][1] += self.parts[i][4]
-         self.parts[i][2] += self.parts[i][5]
+      for i = 1, #parts do
+         parts[i][1] += parts[i][4]
+         parts[i][2] += parts[i][5]
       end
 
-      self.height += self.growth_rate
-      self.width += self.growth_rate
+      height += growth_rate
+      width += growth_rate
 
-      if self.counter < 20 then self.x_flip = true end
-      if self.counter < 10 then self.y_flip = true end
+      if counter < 20 then x_flip = true end
+      if counter < 10 then y_flip = true end
 
    end,
 

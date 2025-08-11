@@ -40,8 +40,7 @@ enemy = {
       -- WRONG: bounds checking will give false positive in corners of box, beyond perimeter of circle
       -- EXTRA WRONG: have added +/- 2 to circle radius to make lock-on more forgiving...
       if (not self.target_locked and
-          abs(player.x - self.x) < self.width and
-          abs(player.y - self.y) < self.height and
+          self:under_reticle() and
           self.z < 8 and
           #player.targets < player.target_limit and
           player.lock_cooldown <= 0 and
@@ -71,12 +70,12 @@ enemy = {
 
       self:subclass_update()
 
-      if (self.z > 4.5) then self.z -= (0.05 * game_world.speed_factor * speed_scale) end
+      if (self.z > 4.5) then self.z -= (0.05 * game_world.speed_factor) end
 
       -- control target lock flashing
       self:control_flash()
 
-      self.fire_timer = self.fire_timer + (1 * game_world.speed_factor * shoot_scale)
+      self.fire_timer = self.fire_timer + (1 * game_world.speed_factor)
       if (self.fire_timer > self.time_to_fire - 30 and self.fire_timer < self.time_to_fire) then
          self.colour = 8
       end
@@ -137,6 +136,16 @@ enemy = {
          locked = false,
          source = "enemy"
       }
+
+   end,
+
+   under_reticle = function(self)
+
+      x, y = project_vert({self.x, self.y, self.z})
+      ret_x, ret_y = player:get_reticle()
+
+      if abs(x - ret_x) < 8 and abs(y - ret_y) < 8 then return true
+      else return false end
 
    end
 

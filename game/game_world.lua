@@ -4,9 +4,9 @@ game_world = {
    bullets = {},
    pickups = {},
    speed_factor = 2,
+   waves = 0,
 
    top_score = 0,
-   --game_objects = {},
 
    mode = "scrolling",
 
@@ -20,31 +20,8 @@ game_world = {
 
    draw = function(self)
 
-      --[[
-
-      for i = 100, 10, -1 do
-         if self.game_objects[i] then
-            for object in all(self.game_objects[i]) do
-               object:draw()
-            end
-         end
-      end
-
-      ]]--
-
       hline_x, hline_y = project_vert({0, -2, 15})
       rectfill(0, hline_y, 128, 128, 15)
-
-      --[[
-
-      self:draw_objects(self.scenery)
-      self.wave:draw()
-      self:draw_objects(self.bullets)
-      self:draw_objects(self.pickups)
-      boss:draw()
-      player:draw()
-
-      ]]--
 
       sorted_scene = self:sort_scene()
       for i = #sorted_scene, 1, -1 do
@@ -56,6 +33,15 @@ game_world = {
    scrolling_update = function(self)
       
       if player.life <= 0 then
+
+         if player.score > self.top_score then
+            self.top_score = player.score
+         end
+
+         dset(0, self.top_score)
+         load("game/game_over.p8")
+
+         --[[
          player.life = 3
          if player.score > self.top_score then
             self.top_score = player.score
@@ -65,6 +51,9 @@ game_world = {
          player.target_limit = 1
          self.speed_factor = 2
          sfx(9)
+
+         ]]
+
       end
 
       if self.wave and self.wave.complete then
@@ -72,7 +61,15 @@ game_world = {
          self.speed_factor += 0.1
          add(self.pickups, self:new_pickup())
       end
-      if not self.wave then self.wave = wave:new() end
+      if not self.wave then 
+         if self.waves < 10 then
+            self.wave = wave:new()
+            self.waves += 1
+         else
+            store_scenery() 
+            load("game/win.p8")
+         end
+      end
       self.wave:update()
 
       player:update()
@@ -101,11 +98,8 @@ game_world = {
    manage_bullets = function(self)
 
       for i = #self.bullets, 1, -1 do
-         if self.bullets[i].counter >= 30 or self.bullets[i].z < 2 then del(self.bullets, self.bullets[i]) end
-      end
-
-      for i = #self.bullets, 1, -1 do
          self.bullets[i]:update()
+         if self.bullets[i].counter >= 30 or self.bullets[i].z < 2 then del(self.bullets, self.bullets[i]) end
       end
 
    end,
@@ -115,34 +109,6 @@ game_world = {
       for i = #self.pickups, 1, -1 do
          self.pickups[i]:update()
          if self.pickups[i].z < 2 then del(self.pickups, self.pickups[i]) end
-      end
-
-   end,
-
-   index_objects = function(self)
-
-      for object in all(self.scenery) do
-
-         i = flr(object.z * 10)
-         self.game_objects[i] = self.game_objects[i] or {}
-         add(self.game_objects[i], object)
-
-      end
-
-   end,
-
-   update_objects = function(self, table)
-
-      for i = 1, #table do
-         table[i]:update()
-      end
-
-   end,
-
-   draw_objects = function(self, table)
-
-      for i = 1, #table do
-         table[i]:draw()
       end
 
    end,
@@ -230,5 +196,34 @@ merge = function(A, p, q, r)
 			j=j+1
 		end
 	end
+
+end
+
+store_scenery = function()
+
+   poke4(0x8000, #game_world.scenery)
+   for i = 0, #game_world.scenery - 1 do
+      obj = game_world.scenery[i + 1]
+      if obj.type == "tree" then
+         poke4(0x8004 + (i * 32), 1)
+      end
+      if obj.type == "rock" then
+         poke4(0x8004  + (i * 32), 2)
+      end
+      if obj.type == "cloud" then
+         poke4(0x8004  + (i * 32), 3)
+      end
+      poke4(0x8004 + (i * 32) + 4, obj.x)
+      poke4(0x8004 + (i * 32) + 8, obj.y)
+      poke4(0x8004 + (i * 32) + 12, obj.z)
+      poke4(0x8004 + (i * 32) + 16, obj.height)
+      poke4(0x8004 + (i * 32) + 20, obj.width)
+      if obj.flip_x then poke4(0x8004 + (i * 32) + 24, 1)
+      else poke4(0x8004 + (i * 32) + 24, 0)
+      end
+      if obj.flip_y then poke4(0x8004 + (i * 32) + 28, 1)
+      else poke4(0x8004 + (i * 32) + 28, 0)
+      end
+   end
 
 end

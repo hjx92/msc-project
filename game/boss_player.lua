@@ -82,7 +82,16 @@ player = {
 
       if (not (btn(4, 0) or btn(5, 0)) and self.holding_fire and not self.has_targets) then
          self.holding_fire = false
-         add(game_world.bullets, bullet:new(self:bullet_instructions(false)))
+         coordinates = self:reticle_on_sphere()
+         if coordinates[1] then
+            new_bullet = self:bullet_instructions(false)
+            new_bullet.x_increment = coordinates[2] / 10
+            new_bullet.y_increment = coordinates[3] / 10
+            new_bullet.z_increment = coordinates[4] / 10
+            add(game_world.bullets, bullet:new(new_bullet))
+         else
+            add(game_world.bullets, bullet:new(self:bullet_instructions(false)))
+         end
          sfx(3)
       end
 
@@ -142,26 +151,11 @@ player = {
 
    pre_draw = function(self)
 
+      self.ret_x, self.ret_y = self:get_reticle()
+
       -- DRAW RETICLE
-      on_enemy = false
-
-      for enemy in all(game_world.wave.enemies) do
-         if abs(self.x - enemy.x) < (enemy.width / 2) and abs(self.y - enemy.y) < (enemy.height / 2) and not on_enemy then
-            on_enemy = true
-            rot_x, rot_y, rot_z = boss_mode_rotate({enemy.x, enemy.y, enemy.z}, game_world.rotation)
-            x, y = project_vert({rot_x, rot_y, rot_z})
-            line(x - 2, y, x + 2, y, 9)
-            line(x, y - 2, x, y + 2, 9)
-         end
-      end
-
-      if not on_enemy then 
-         rot_x, rot_y, rot_z = boss_mode_rotate({self.x, self.y, self.z}, game_world.rotation)
-         x, y = project_vert({rot_x, rot_y, rot_z + 3})
-         line(x - 1, y, x + 1, y, 9)
-         line(x, y - 1, x, y + 1, 9)
-      end
-
+      line(self.ret_x - 1, self.ret_y, self.ret_x + 1, self.ret_y, 9)
+      line(self.ret_x, self.ret_y - 1, self.ret_x, self.ret_y + 1, 9)
 
       -- DRAW COCKPIT
       rear1 = {}
@@ -232,14 +226,18 @@ player = {
    end,
 
    bullet_instructions = function(self, locked_bool)
+         
+      x_diff = 0 - self.x
+      y_diff = 0 - self.y
+      z_diff = 5 - self.z
 
       return {
          x = self.x,
          y = self.y,
          z = self.z,
-         x_increment = 0,
+         x_increment = x_diff * 0.1,
          y_increment = 0,
-         z_increment = 0.2,
+         z_increment = z_diff * 0.1,
          locked = locked_bool,
          source = "player"
       }
@@ -298,6 +296,39 @@ player = {
       z += 5
 
       return x, z
+
+   end,
+
+   get_reticle = function(self)
+
+      x, y, z = boss_mode_rotate({self.x, self.y, self.z}, game_world.rotation)
+      player_x, player_y = project_vert({x, y, z}, game_world.rotation)
+
+      return (player_x + 64) / 2, (player_y + 64) / 2
+
+   end,
+
+   reticle_on_sphere = function(self)
+
+      length = {0, 0, 5}
+
+      ret_x, ret_y = self:get_reticle()
+      ret_direction = {(ret_x - 64) / 64, (64 - ret_y) / 64, 1}
+      tc = dot_product(length, ret_direction)
+      if tc < 0 then return {false, 0, 0, 0} end
+
+      l_mag = sqrt((length[1] * length[1]) + (length[2] * length[2]) + (length[3] * length[3]))
+
+      d = sqrt((tc * tc) - (l_mag * l_mag))
+      if (d > 2.5888) then return {false, 0, 0, 0} end
+
+      t1c = sqrt((2.5888 * 2.5888) - (d * d))
+      t1 = tc - t1c
+
+      coordinates = scale(ret_direction, t1)
+      return {true, coordinates[1], coordinates[2], coordinates[3]}
+
+
 
    end
 }

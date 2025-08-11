@@ -1,26 +1,27 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
-#include main.lua
+#include boss_main.lua
+#include boss.lua
 #include bullet.lua
 #include camera.lua
 #include collision.lua
 #include drone.lua
-#include enemy.lua
+#include boss_enemy.lua
 #include explosion.lua
 #include game_object.lua
 #include game_world.lua
 #include hud.lua
 #include linear_algebra.lua
 #include pickup.lua
-#include player.lua
+#include boss_player.lua
 #include polygonal_object.lua
 #include rendering_functions.lua
 #include scenery_object.lua
 #include sprite_object.lua
 #include transformations.lua
 #include triangle.lua
-#include wave.lua
+#include boss_wave.lua
 __gfx__
 00000000000006666660000000000000000000000000005555000000776770000007767700999000009990000088800000000000000000000000000000000000
 00333300000066555566000000000990000000000000550000550000667660000006676609919900099199000881880000000000000000000000000000000000

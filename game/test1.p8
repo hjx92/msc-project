@@ -1,7 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
-#include main.lua
+#include main1.lua
 #include bullet.lua
 #include camera.lua
 #include collision.lua
