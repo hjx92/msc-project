@@ -1,0 +1,48 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global/global}
+    \entry{white}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=e96ddd1cf4da2638c966b849a56c9ac3}{%
+           family={White},
+           familyi={W\bibinitperiod},
+           given={Joseph},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{e96ddd1cf4da2638c966b849a56c9ac3}
+      \strng{fullhash}{e96ddd1cf4da2638c966b849a56c9ac3}
+      \strng{fullhashraw}{e96ddd1cf4da2638c966b849a56c9ac3}
+      \strng{bibnamehash}{e96ddd1cf4da2638c966b849a56c9ac3}
+      \strng{authorbibnamehash}{e96ddd1cf4da2638c966b849a56c9ac3}
+      \strng{authornamehash}{e96ddd1cf4da2638c966b849a56c9ac3}
+      \strng{authorfullhash}{e96ddd1cf4da2638c966b849a56c9ac3}
+      \strng{authorfullhashraw}{e96ddd1cf4da2638c966b849a56c9ac3}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{PICO-8 User Manual}
+      \field{year}{2024}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

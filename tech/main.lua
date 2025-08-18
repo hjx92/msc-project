@@ -352,7 +352,7 @@ end
 
 function _draw()
 
-   cls(0)
+   cls(5)
    cube_list:draw()
    --tri1:draw()
    --tri2:draw()

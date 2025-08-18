@@ -18,6 +18,7 @@ player = {
    lock_cooldown = 0,
    lock_cooldown_speed = 1,
    target_limit = 1,
+   fire_cooldown = 20,
 
    recently_hit = false,
    recently_hit_timer = 0,
@@ -67,6 +68,7 @@ player = {
    update = function(self)
 
       self.timer += 1
+      if self.fire_cooldown < 20 then self.fire_cooldown += 1 end
 
       if (self.lock_cooldown > 0) then self.lock_cooldown -= 1 end
 
@@ -82,8 +84,11 @@ player = {
 
       if (not (btn(4, 0) or btn(5, 0)) and self.holding_fire and not self.has_targets) then
          self.holding_fire = false
-         add(game_world.bullets, bullet:new(self:bullet_instructions(false)))
-         sfx(3)
+         if self.fire_cooldown >= 20 then
+            self.fire_cooldown = 0
+            add(game_world.bullets, bullet:new(self:bullet_instructions(false)))
+            sfx(3)
+         end
       end
 
       if (not (btn(4, 0) or btn(5, 0)) and self.holding_fire and self.has_targets) then

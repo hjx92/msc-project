@@ -83,15 +83,16 @@ player = {
       if (not (btn(4, 0) or btn(5, 0)) and self.holding_fire and not self.has_targets) then
          self.holding_fire = false
          coordinates = self:reticle_on_sphere()
-         if coordinates[1] then
+         --[[ if coordinates[1] then
             new_bullet = self:bullet_instructions(false)
             new_bullet.x_increment = coordinates[2] / 10
             new_bullet.y_increment = coordinates[3] / 10
             new_bullet.z_increment = coordinates[4] / 10
             add(game_world.bullets, bullet:new(new_bullet))
-         else
+            ]]--
+         -- else
             add(game_world.bullets, bullet:new(self:bullet_instructions(false)))
-         end
+         -- end
          sfx(3)
       end
 
