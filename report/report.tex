@@ -72,17 +72,46 @@ rendering for simpler 2D effects.
 \section{Background and context}
 
 \subsection{The rail shooter}
+
 \subsubsection*{Historical outline}
 Give broad overview of significance of rail shooters in the development of approaches
 to 3D game design and chart their development with a focus on:
-\begin{itemize}
-   \item\textit{Space Harrier} and the 2D Super Scaler approach;
-   \item\textit{Star Fox} as an exemplar for 16-bit polygonal 3D with
-   cartridge storage limitations;
-   \item\textit{Panzer Dragoon} as a 32-bit polygonal 3D game on optical media;
-   \item and \textit{Rez} as a mature rail shooter with continued life in VR and
-   ongoing aesthetic significance.
-\end{itemize}
+
+Early entires in the genre relied primarily on sprite-scaling effects facilitated first by
+Sega's Super Scaler arcade board, and later (in more primitve form) by the publisher's
+home consoles. \textit{Space Harrier}, which debuted on the Super Scaler board in 1985, demonstrated
+the utility of the approach for fast paced action combat games, allowing players to enter a bizarre
+fantasy sci-fi world in which an unnamed space man levitates through space and blasts a variety of
+enemy craft and alien creatures with a powerful energy gun. Meanwhile \textit{Hang-On} showcased its use
+for games in the racing genre, simulating approaching sharp turns and rival motorcyles with an illusion
+of 3D depth.
+
+Both of these distinctive Super Scaler game genres - the rail shooter and the pseudo-3D
+racer - would see continued development in the years to come with more sophisticated arcade board
+technology that allowed developers to depict a greater number of sprites and apply more complex
+transformations on them, such as real-time rotation. Of these later entries, \textit{After Burner} is the
+most notable of the rail shooters, allowing players to take control of a supersonic fighter jet, while
+\textit{Outrun} remains the most iconic of the Super Scaler driving games.
+
+In 1993, Argonaut Software's acclaimed title \textit{Star Fox} for the Super Nintendo Entertainment
+System took the genre a step further with the integration of real-time polygonal graphics. Auguemting
+the SNES with the Super FX chip - an on-cartridge co-processor for graphics acceleration -
+\textit{Star Fox} saw players traverse worlds with polygonal enemies and simple 3D world geometry,
+engaging in the genre's staple aim-and-shoot gameplay while also moving through gates.
+
+Sega's 1995 title \textit{Panzer Dragoon}, launched for the Sega Saturn before its international
+rollout, brought richer texture-mapped 3D worlds and a celebrated orchestral soundrack by composer
+Yoshitaka Azuma, once again showcasing advances in home console technology - in this case, the
+shift to less memory constrained disc-based media.
+
+The genre reached its artist apotheosis with \textit{Rez} in 2001 for the Sega Dreamcast.
+The game uses wireframe graphics to depict a hacker's infiltration of a computer system, and exploits the
+scripted nature of the genre by synchonising gameplay to an intense techno music soundtrack.
+
+The game also made interesting design decisions as a response to the Dreamcast's antiquated
+single-analogue input that continue to be felt on modern systems to which the game has been ported and
+continues to be popular - most notably to the Xbox 360 as \textit{Rez HD}, and to the PlayStation 4,
+PlayStation 5, and Oculus Quest as \textit{Rez Infinite} with new VR modes.
 
 \begin{figure}[h]
 \begin{subfigure}{.5\textwidth}
@@ -109,7 +138,7 @@ to 3D game design and chart their development with a focus on:
   \caption{\textit{Rez Infinite} (2016)}
   \label{fig:sfig4}
 \end{subfigure}
-\caption{the development of the rail shooter over time}
+\caption{four exemplar rail shooters}
 \label{fig:history}
 \end{figure}
 
@@ -150,7 +179,11 @@ limited room for gameplay innovation and discuss their waning significance in
 commercial game design - with appropriate counter-examples of cult following for
 balance.
 
-\subsection{PICO-8}
+\subsection{PICO-8}\label{pico}
+
+Brief discussion of decision-making process involved in choosing PICO-8 as tool, with focus on
+project scope, interest in technical implementation details, and 3D modelling demands of building
+such a game in an off-the-shelf 3D game engine ala Unreal or Unity.
 \subsubsection*{Introduction to PICO-8}
 % Discuss ethos of PICO-8 as a ``fantasy console'' and outline its technical
 % specification - emphasis on compute power, memory limitations, screen resolution,
@@ -191,6 +224,11 @@ This, wrapped in functionality to project points in 3D space to points on a 2D s
 allows the sort of sprite scaling that can simulate depth in 3D space among
 multiple 2D sprite assets.
 
+Where PICO-8 is disadvantaged is in the lack of support for arbitrary rotation of sprites -
+a limitation imposed both by PICO-8's effort to emulate 8-bit games systems, which did not yet
+have this facility, but also by the coarseness of the platform's pixel grid and the low fidelity
+of accompanying sprites which resist easy rotation around small angles.
+
 \subsubsection*{Extensibility of 2D primatives for 3D}
 % Discuss \textit{Star Fox} as exemplar polygonal rail shooter built within similar
 % constraints and make critical comparison between PICO-8 platform specification and
@@ -229,6 +267,41 @@ the known constraints of the system. Emphasis on:
    constraint of the system, as a last resort to deal with token limits.
 \end{itemize}
 
+% OOP
+
+One of the most pressing constraints when developing for PICO-8 is the per-cart token
+limit, which constrains the amount of code the can define your game. It is therefore
+imperitive to practice good discipline in coding, avoiding code duplication and making use
+of well structured object-oriented software architecture. PICO-8 carts are written in the
+Lua scripting language, which is not traditionally object-oriented but which does have the
+facilities to allow a form of prototype-based object orientation using metatables.
+% use quotes from the Lua book 
+
+% frame target ?? to keep or to cull...
+
+Another obvious mitigation is to use the console's default 30Hz refresh mode rather than
+the optional 60Hz mode. While faster refresh creates a more fluid and responsive game,
+it trivially halves your frame budget.
+
+% blended approach
+
+While the project aims to incorporate polygonal rendering, one important mitigation against
+PICO-8's constraints is to not dogmatically adopt a purely polygonal approach and instead
+opt for a blended approach that uses both polygonal and sprite-based rendering in a
+blended way, allowing for more action on screen while allowing perspective-correct 3D models
+in situations where they benefit the game.
+
+% multi cart
+
+One further possible mitigation involves eschewing one of the system's constraints entirely.
+PICO-8 does allow carts to load and run other carts, allowing developers to sidestep token
+limits and build out multi-cart games, in which sections of the game are broken out into
+separate discrete carts - perhaps sharing some assets and functionality - and then chained
+together using load and run calls.
+
+This approach will be discussed in more detail in Section \ref{multicart}, since it was an
+approach ultimately taken in the final stretch of the project.
+
 
 \section{Implementation I: Prototyping}
 
@@ -238,19 +311,8 @@ a paper prototype concretising the core gameplay loop, in which the player moves
 space and encounters enemies, and a software implementation of that paper prototype in PICO-8; and
 secondly, initial technical work confirming the potential of PICO-8 for polygonal rendering and
 allowing me to start getting to grips with the basic ideas behind real-time rendering in general.
-\subsubsection*{Basic player actions using primatives}
-Referring back to the gameplay taxonomy conducted in the background section, explain
-how the most significant user actions were distilled down to fit a six-input
-gamepad. Showcase how this was modelled using a flat paper prototype and outline
-how this was translated into a software prototype using primitive shapes to model
-the player and randomly spawned enemies, with movement and interactions being
-directly translated into screen-space.
 
-Highlight issues already identified at this early stage of prototyping - such as
-player model blocking, the relationship between the player reticle and the destination
-of projectiles in hypothecated 3D space, the need for limitations on enemy
-target locking, and the need for game objects to have a meaningful existence in 3D
-space.
+\subsubsection*{Basic player actions using primatives}
 
 \begin{figure}[h]
 \begin{subfigure}{.5\textwidth}
@@ -269,18 +331,94 @@ space.
 \label{fig:gameprototype}
 \end{figure}
 
-\subsubsection*{Simple 3D renderer with model scaling and rotations}
-Describe the contruction of a simple 3D renderer to prove suitability of PICO-8 for
-the proposed project. Expose and discuss my implementation of triangle rasterisation
-in PICO-8 and briefly explain the benefits of decomposing 3D shapes into triangles
-rather than quads. Discuss related issues in polygonal rendering such as triangle
-sorting and backface culling.
+Referring back to the gameplay taxonomy conducted in the background section, explain
+how the most significant user actions were distilled down to fit a six-input
+gamepad. Showcase how this was modelled using a flat paper prototype and outline
+how this was translated into a software prototype using primitive shapes to model
+the player and randomly spawned enemies, with movement and interactions being
+directly translated into screen-space.
 
-Showcase the results of the ``sanity test'', in which multiple
-cubes are drawn to the screen progressively in order to understand the relative
-computational cost of tracking and drawing 3D geometry in PICO-8 and the feasibility
-of real-time polygonal rendering given system constraints and my existing quality
-of implementation.
+Highlight issues already identified at this early stage of prototyping - such as
+player model blocking, the relationship between the player reticle and the destination
+of projectiles in hypothecated 3D space, the need for limitations on enemy
+target locking, and the need for game objects to have a meaningful existence in 3D
+space.
+
+\subsubsection*{Simple 3D renderer with model scaling and rotations}
+
+% Describe the contruction of a simple 3D renderer to prove suitability of PICO-8 for
+% the proposed project. Expose and discuss my implementation of triangle rasterisation
+% in PICO-8 and briefly explain the benefits of decomposing 3D shapes into triangles
+% rather than quads. Discuss related issues in polygonal rendering such as triangle
+% sorting and backface culling.
+
+While working on the initial software prototype outlined above, a second course of work
+was followed to confirm the capacity of PICO-8 to render polygonal models and to begin
+building the required functionality over and above PICO-8's primitive drawing functions.
+
+Firstly, a simple algorithm was implemented to draw a filled triangle between three points
+in screen space, using line-by-line rect() calls to draw lines between appropriate points on the
+sides of the triangle. The rectangular draw function rect() is used
+rather than the more intuitive line() function, because PICO-8's implementation of line drawing
+includes additional overhead to calculate best fitting lines between diagonal points, even when
+drawing lines between two points that share a position on one axis.
+
+Triangles are used as the building block for polygonal rendering because three points, which define
+a plane in 3D space, guarantee stable flat surfaces - whereas quad rendering can produce surfaces
+between points that are under-described, with a fourth point sitting on a different plane to the
+other three and creating ambiguities in the relation of points across a surface. It should be
+noted, however, that nothing forces us to use triangles - and indeed the Sega Saturn did render
+polygonal graphics using texture mapped quads.
+
+% triangle algorithm
+
+The coordinate points of the triangle are first sorted by their \textit{y}-axis position. The
+per-line step required to draw the long side is then calculated by dividing the \textit{x}-axis
+distance between the highest and lowest point by their distance in \textit{y}.
+
+The two shorter sides are then calculated by performing the same operation between the highest
+and middle points, and again between the middle point and the lowest point. Appropriate logic is
+included to handle edge cases too - for example, where two or three points share a position in
+\textit{y}.
+
+% point projection
+
+Once triangle drawing functionality was built, functionality to translate 3D coordinates onto
+screen space was required. This was done through the use of point projection calculations which
+will be discussed in more detail in Section \ref{conversion},
+where its broader application to the game software itself will be covered.
+
+% description of 3D models
+
+3D models are described by giving the position of their vertices in 3D model space - that is,
+with the object centred around origin (0, 0, 0) so that it can easily be scaled and rotated
+before being translated into a more specific world space location. The vertices are then connected
+in data defining the triangles they form in the model, with points listed in clockwise order from
+the outside to establish their orientation and enable techniques like backface culling.
+
+% discuss scaling and rotation functions
+
+% discuss triangle sorting and backface culling
+
+% PERHAPS include code for triangle drawing and polygonal rendering... hmm... 
+
+% Showcase the results of the ``sanity test'', in which multiple
+% cubes are drawn to the screen progressively in order to understand the relative
+% computational cost of tracking and drawing 3D geometry in PICO-8 and the feasibility
+% of real-time polygonal rendering given system constraints and my existing quality
+% of implementation.
+
+Once the core rendering functionality had been built for a single cube, the functionality
+was subjected to a simple ``sanity test'' to establish confidence that the performance
+cost of polygonal rendering in PICO-8 was not too heavy to preclude its use in the
+game.
+
+Using common model space data, nine cubes were defined in our PICO-8 cart with simple inputs
+to cycle through the numbers being rendered at any one time. Figure \ref{fig:3dprototype}
+outlines the results of the testing with backface culling enabled.
+
+% redo these tests - test with and without backface culling and also test a control where
+% cubes do not exist unless they are drawn...
 
 \begin{figure}[h]
 \begin{subfigure}{.5\textwidth}
@@ -311,35 +449,20 @@ of implementation.
 \label{fig:3dtest}
 \end{figure}
 
-\subsection{3D conversion of software prototype}
+\subsection{3D conversion of software prototype}\label{conversion}
 
-While the initial software prototype served a useful purpose in allowing me to get comfortable
-with core mechanics of the game, and in getting me to begin thinking about significant design
-decisions that needed to be made, its origins in a flat paper prototype also led to key technical
-implimentation issues being elided - namely the proper handling of depth and perspective necessary
-to really deliver on the initial idea of the project.
+While the initial software prototype served a useful purpose in creating familiarity
+with the basic mechanics and feel of the game, and sparking early thinking about some of the
+significant design decisions that needed to be made, its origins in a flat paper prototype
+also led to key technical implimentation issues being elided - namely the accurate handling
+of depth and perspective necessary to properly deliver on the initial idea of the project.
 
 As such, the initial software prototype was built on in the next phase of development and refactored
-such that objects carried proper three-dimensional positions in world space, and were drawn in a
-properly scaled and perspective correct way instead of having movement in depth simply faked through
-rudimentary arbitrary re-scaling.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=.8\textwidth]{explosion}
-    \caption{final software prototype}
-    \label{fig:particles}
-\end{figure}
-
-\subsubsection*{Graphical effects with 2D sprites and particles}
-Describe the implementation of 2D sprites to replace primitive shapes used in earlier
-iterations of the prototype. Discuss the design considerations that led to the
-adoption of easily identifiable flying saucer and drone designs. Discuss simple
-graphical effects used to eg light up flying saucer lights, or spin rotors of
-enemy drones. Explain implementation of enemy destruction effects - namely the
-implementation of a simple particle system over the bed of an explosion animation
-efficiently faked by a combination of progressive scaling and random flipping of a
-non-symmetrical sprite.
+so that objects carried proper three-dimensional positions in world space, and were drawn in a
+properly scaled and perspective correct way instead of having movement in depth faked through
+arbitrary re-scaling in screen space. Likewise, collision handling was re-written to accurately detect
+intersections of bounding volumes in three-dimensional space, instead of being handled through
+screen space intersection in a 2D plane.
 
 \subsubsection*{Perspective-correct 3D projection and scaling}
 % Discuss the application of 3D point projection to the corners of 2D sprite objects
@@ -350,15 +473,153 @@ One of the key changes introduced in this 3D software prototype was the creation
 depth among enemy units, created by correctly projecting sprite objects onto the screen using
 newly introduced \textit{z}-coordinate values.
 
-In order to accurately project a point from 3D space onto a screen, you must... \cite{gambetta}
+In order to accurately project a point from 3D space onto a screen, we must hypothecate a viewport in 3D space
+and a camera position, and then exploit the law of similar triangles to identify the point in space at
+which the the line between the point and our camera - which will be positioned at at the origin of the
+coordinate system, (0, 0, 0), for simplicity - intersects with our viewport.
 
-TO DO: EXPLAIN GENERIC POINT PROJECTION EQUATION - LAW OF SIMILAR TRIANGLES ETC
-
-\begin{figure}[h]
-\begin{subfigure}{.45\textwidth}
+\begin{figure}
    \centering
    \begin{tikzpicture}
-      [scale = 1,
+      [scale = 1.5,
+      axis/.style={-stealth},
+      dot/.style= {
+         draw,
+         fill = black,
+         circle,
+         inner sep = 0pt,
+         minimum size = 4pt
+      },
+      point/.style= {
+         draw,
+         fill = black,
+         circle,
+         inner sep = 0pt,
+         minimum size = 2pt
+      }]
+      
+      \draw[axis] (-0.5, 0) -- (5, 0) node[right] {$z$};
+      \draw[axis] (0, -0.5) -- (0, 2) node[above] {$y$};
+      \draw (1, -0.25) -- (1, 1.5) node[above] {$viewport$};
+
+      \draw (3, 1.5) node[dot, label = {right:$P$}] {};
+      \draw (3, 1.5) -- (3, 0);
+      \draw (3, 1.5) -- (0, 0);
+
+      \draw (0, 0) node[below left] {$O$};
+      \draw (1, 0) node[below left] {$A$};
+      \draw (3, 0) node[below] {$B$};
+      \draw (1, 0.5) node[dot, label = {above left:$P'$}] {};
+
+   \end{tikzpicture}
+   \caption{side orthographic view of a point projection on the \textit{y}-axis, adapted from figure 9-2 of Gambetta
+   \cite[p. 106]{gambetta}}
+   \label{fig:triangles}
+\end{figure}
+
+This operation must be performed along both the \textit{x} and \textit{y} axes, and figure \ref{fig:triangles}
+illustrates how the law of similar triangles can be used to determine viewport projection of point \textit{P}
+in the \textit{y}-axis as an example. \cite[p. 106]{gambetta}
+
+Because triangles OBP and OAP' are similar triangles - that is, they are right angled triangles that have the same
+internal angles - we can leverage the fact that, as similar triangles, the ratio of their equivalent sides is the same.
+
+Therefore we can say that the ratio of lengths OA and AP' is the same as the ratio of lengths OB and BP. If we know
+the coordinate position of point P, we know that OB is its position in \textit{z} and BP is its position in \textit{y}.
+We also know that length OA is simply the distance between the camera and the viewport - a distance which we know because
+we have hypothecated these objects in 3D space ourselves. As a consequence, the length of the line AP' is:
+
+\begin{equation}
+   |AP'| = \frac{|BP| * |OA|} {|OB|}
+\end{equation}
+
+or, the \textit{y} coordinate of the point, projected onto the viewport V, is:
+
+\begin{equation}
+   V_y = \frac{P_y * V_z} {P_z}
+\end{equation}
+
+Once this calculation is made, we simply need to translate the figures for our actual screen or canvas, which uses different
+measures from our in-scene viewport, and this is achieved by multiplying the calculated coordinate by the width or height of
+our canvas in pixels (128 in both axes in PICO-8), and dividing this by the in-scene width or height of our viewport.
+
+In figure \ref{fig:equationsproject} we see how this calculation can be simplified by hypothecating a 1 by 1 in-scene viewport and
+a viewport distance of 1 in \textit{z} - since any number divided or multiplied by 1 remains unchanged, we can simply eliminate
+arbitrary multiplications and divisions from our computation and scale our scenes for this set-up. The downside of this approach,
+however, is that it does lock us into a particular field of view.
+
+Finally, the position value must be adjusted to account for the fact that the centre of our in-scene viewport looks directly
+along the \textit{z}-axis along \textit{x}, \textit{y} coordinates of (0, 0), whereas (0, 0) on our canvas exists
+in the top left corner of the screen rather than the centre, and the positive direction of \textit{y} is therefore
+inverted on our screen too.
+
+This entire operation is implemented in the code highlighted in figure \ref{fig:codeproject} using a single short function
+that takes a three-component vector - representing the \textit{x}, \textit{y}, and \textit{z} coordinates of a
+vertex in space - and projects them onto a viewport of width and height 1, centred around (0, 0) and located
+one unit along the \textit{z}-axis. This returns two values, for screen projection in \textit{x} and \textit{y}.
+
+\begin{figure}[h]
+   \begin{subfigure}{.45\textwidth}
+   \centering
+      \begin{equation}
+         C_x = \frac{\frac{P_x * V_z} {P_z} * C_w} {V_w}
+      \end{equation}
+      \begin{equation}
+         C_y = \frac{\frac{P_y * V_z} {P_z} * C_h} {V_h}
+      \end{equation}
+   \caption{complete projection equations}
+   \label{fig:equationfullproject}
+   \end{subfigure}\hfill
+   \begin{subfigure}{.45\textwidth}
+   \centering
+      \begin{equation}
+         C_x = \frac{P_x} {P_z} * C_w
+      \end{equation}
+      \begin{equation}
+         C_y = \frac{P_y} {P_z} * C_h
+      \end{equation}
+   \caption{simplified projection equations}
+   \label{fig:equationsimpleproject}
+   \end{subfigure}\hfill
+\caption{simplification of perspective projection calculations through use of values of 1 for viewport width
+and height ($V_w$ and $V_h$), and viewport depth $V_z$}
+\label{fig:equationsproject}
+\end{figure}
+
+This function is called twice for each sprite drawn, finding the position of the top-left and bottom-right
+corners of its face - derived from an object's position, its width, and its height - and then drawing the
+sprite using PICO-8's in-built scaled sprite function sspr(), discussed in Section 2.2.
+
+Figure \ref{fig:projection} illustrates how this process renders scenes using perspective projection.
+While it highlights the use of this function to project the extreme corners of 2D sprites onto a screen,
+the same method is also used by the program to project the three vertices of triangles onto screen space
+too - allowing the rendering of polygonal shapes such as the player ship and the icosahedral boss enemy shell,
+or the polygonal cubes discussed in the previous section. Discussion of \textit{z}-sorting to ensure proper
+ordering as well as proper scaling of objects will be picked up in Section 4.3.
+
+\begin{figure}[h]
+   \begin{lstlisting}
+project_vert = function(vect3)
+
+   return 64 + (((vect3[1] - camera.x) / vect3[3]) * 128),
+           64 - (((vect3[2] - camera.y) / vect3[3]) * 128)
+
+end
+   \end{lstlisting}
+   \caption{vertex projection function}
+   \label{fig:codeproject}
+\end{figure}
+
+Note: in the implementation highlighted in figure \ref{fig:codeproject} from the software prototype, displacements
+in the \textit{x} and \textit{y} axes were added to represent relative motion of the camera - although this
+effect was later removed from the final version of the game, since it tended to make the gameplay harder to reason
+about spatially.
+
+\begin{figure}[h]
+\begin{subfigure}{.3\textwidth}
+   \centering
+   \begin{tikzpicture}
+      [scale = .6,
       axis/.style={-stealth},
       dot/.style= {
          draw,
@@ -381,22 +642,19 @@ TO DO: EXPLAIN GENERIC POINT PROJECTION EQUATION - LAW OF SIMILAR TRIANGLES ETC
       \draw[line width = 2] (-0.5, 1) -- (0.5, 1);
       \draw[draw = gray] (0, 0) -- (-2, 4);
       \draw[draw = gray] (0, 0) -- (2, 4);
-      \draw[<->] (-0.7, 0) -- node[left] {$C_z$} (-0.7, 1);
-      \draw[<->] (-1.4, 0) -- node[left] {$P_z$} (-1.4, 3);
-      \draw[<->] (-0.5, 1.2) -- (0.5, 1.2) node[right] {$C_w$};
 
       \draw[line width = 2, draw = blue] (-1.1, 4) rectangle (-0.6, 4);
       \draw[line width = 2, draw = red] (-1.2, 3) rectangle (-0.7, 3);
       \draw[line width = 2, draw = green] (0.7, 2) rectangle (1.2, 2);
 
    \end{tikzpicture}
-   \caption{top orthographic view}
+   \caption{top orthographic view of a game scene}
    \label{fig:rotfig1}
 \end{subfigure}\hfill
-\begin{subfigure}{.45\textwidth}
+\begin{subfigure}{.3\textwidth}
    \centering
    \begin{tikzpicture}
-      [scale = 1,
+      [scale = .6,
       axis/.style={-stealth},
       dot/.style= {
          draw,
@@ -422,13 +680,13 @@ TO DO: EXPLAIN GENERIC POINT PROJECTION EQUATION - LAW OF SIMILAR TRIANGLES ETC
       \draw[line width = 2] (-0.5, -0.5) rectangle (0.5, 0.5);
 
    \end{tikzpicture}
-   \caption{front orthographic view}
+   \caption{front orthographic view of a game scene}
    \label{fig:rotfig1}
 \end{subfigure}\hfill
-\begin{subfigure}{1\textwidth}
+\begin{subfigure}{.3\textwidth}
    \centering
    \begin{tikzpicture}
-      [scale = 4,
+      [scale = 1.8,
       axis/.style={-stealth},
       dot/.style= {
          draw,
@@ -462,74 +720,238 @@ TO DO: EXPLAIN GENERIC POINT PROJECTION EQUATION - LAW OF SIMILAR TRIANGLES ETC
 \label{fig:projection}
 \end{figure}
 
-This operation is implemented in the code using a single function that takes a three-component vector -
-representing the \textit{x}, \textit{y}, and \textit{z} coordinates of a vertex in space - and projects them
-onto a screen of width and height 1, centred around (0, 0) and located one unit along the \textit{z}-axis.
+\subsubsection*{Real-time 3D collisions}
 
-This positioning along \textit{z} and the use of a 1 by 1 screen simplifies the math required by reducing the
-need for extraneous divisions and multiplications by arbitrary values, since any number divided or multiplied 
-by 1 is unchanged - allowing us to cancel out variables in the projection equation as seen in
-figure \ref{fig:equationsimpleproject}.
+% Discuss implementation of cuboid bounding volumes to test for collisions, using
+% height, width, and depth data paired if three-dimensional positions to check for
+% intersection of volumes. Discuss the need for axis-alignment to significantly
+% simplify calculations, and the design implications of this with regard to rotational
+% symmetry of objects depicted (ie disc-shaped saucers, and spherical projectiles)
+
+Having translated the game into 3D world space for the purposes of perspective-correct rendering, adjusting
+the game's collision system was the next logical step.
+
+In the initial software prototype, without \textit{z} values to work with, single pixel projectiles were simply
+fired across the screen in a 2D plane with simple checks to see if they had entered the player (represented in
+the initial prototype as a hollow rectangle) or enemies (represented as solid circles). This became untenable
+as a solution, given that it jarred with perspective-correct rendering of enemy units, and the prototype was
+updated to test for collisions using cuboid bounding volumes.
+
+Cuboid bounding volumes can have two principal uses in a collision detection system. In complex simulations,
+checks for intersection between cuboid volumes can be used as a pruning mechanism - an initial approximation
+to either disconfirm that intersection has occurred, or else call for a more complex test of the actual
+geometry being bounded. In more simple systems, such as the low-fidelity game being built in this project,
+cuboid volumes can be used effectively to test for collisions in general.\cite[p. 75]{ericson}
+
+Two of the most desirable characteristics of bounding volumes are tightness of fit with underlying geometry,
+and ease of rotation and transformation.\cite[p. 76]{ericson} As such, an early design decision was made to
+populate the game with objects that are exactly (or close to exactly) rotationally symmetrical.
+
+Therefore projectiles are depicted as spheres, rather than taking on a tapered bullet-shaped appearance. The main
+enemy units are depicted as round flying saucers. Both objects can be represented in collision space in
+axis-aligned cuboid bounding volumes that do not need to rotate at all to reflect any putative rotation of
+the object in space, significantly simplifying intersection calculations.
+
+Although these bounding volumes are not perfect matches for the objects being represented, they are sufficiently
+tightly bound to simulate a plausible system of collisions - to quote Christer Ericson, veteran programmer of Sony
+Santa Monica and NeverSoft, ``in games, collision detection and response can effectively be governed by `if it looks
+right, it is right.' Other applications have stricter accuracy requirements.''\cite[p. 12]{ericson}
 
 \begin{figure}[h]
-   \begin{equation}
-      C_x = \frac{P_x} {P_z} * C_w
-   \end{equation}
-   \begin{equation}
-      C_y = \frac{P_y} {P_z} * C_h
-   \end{equation}
-   \caption{simplified projection equations}
-   \label{fig:equationsimpleproject}
+\centering
+\begin{subfigure}{.45\textwidth}
+   \centering
+   \begin{tikzpicture}
+      [scale = 0.8,
+      axis/.style={-stealth},
+      dot/.style= {
+         draw,
+         fill = black,
+         circle,
+         inner sep = 0pt,
+         minimum size = 4pt
+      },
+      point/.style= {
+         draw,
+         fill = black,
+         circle,
+         inner sep = 0pt,
+         minimum size = 2pt
+      }]
+      
+      \draw[axis] (-0.5, 0, 0) -- (3, 0, 0) node[right] {$x$};
+      \draw[axis] (0, -0.5, 0) -- (0, 3, 0) node[above] {$y$};
+      \draw[axis] (0, 0, 0.5) -- (0, 0, -1) node[above] {$z$};
+
+      \draw[line width = 2] (0.5, 4.5, -0.5) rectangle (4.5, 0.5, -0.5);
+      \draw[line width = 2] (0.5, 4.5, -4.5) rectangle (4.5, 0.5, -4.5);
+      \draw[line width = 2] (0.5, 4.5, -0.5) -- (0.5, 4.5, -4.5);
+      \draw[line width = 2] (0.5, 0.5, -0.5) -- (0.5, 0.5, -4.5);
+      \draw[line width = 2] (4.5, 4.5, -0.5) -- (4.5, 4.5, -4.5);
+      \draw[line width = 2] (4.5, 0.5, -0.5) -- (4.5, 0.5, -4.5);
+
+      \draw (2.5, 2.5, -2.5) node[dot, label = {left:$P$}] {};
+      \draw [dashed] (2.5, 2.5, -2.5) -- (4.5, 2.5, -2.5) node[below] {$w/2$};
+      \draw [dashed] (2.5, 2.5, -2.5) -- (2.5, 4.5, -2.5) node[left] {$h/2$};
+      \draw [dashed] (2.5, 2.5, -2.5) -- (2.5, 2.5, -0.5) node[right] {$d/2$};
+
+   \end{tikzpicture}
+   \caption{a centre-radius bounding representation defined by position \textit{P}, height \textit{h},
+   width \textit{w}, and depth \textit{d}}
+   \label{fig:colfig1}
+\end{subfigure}\hfill
+\begin{subfigure}{.45\textwidth}
+   \centering
+   \begin{tikzpicture}
+      [scale = 0.8,
+      axis/.style={-stealth},
+      dot/.style= {
+         draw,
+         fill = black,
+         circle,
+         inner sep = 0pt,
+         minimum size = 4pt
+      },
+      point/.style= {
+         draw,
+         fill = black,
+         circle,
+         inner sep = 0pt,
+         minimum size = 2pt
+      }]
+      
+      \draw[axis] (-0.5, 0) -- (3, 0) node[right] {$x$};
+      \draw[axis] (0, -0.5) -- (0, 3) node[above] {$y$};
+
+      \draw[line width = 2] (0.5, 0.5) rectangle (3.5, 3.5);
+      \draw (2, 2) node[dot, label = {left:$P_1$}] {};
+      \draw[line width = 2] (3, 1.5) rectangle (5, 6.5);
+      \draw (4, 4) node[dot, label = {right:$P_2$}] {};
+
+      \draw [dashed] (2, 2) -- (3.5, 2) node[right] {$w_1/2$};
+      \draw [dashed] (4, 4) -- (3, 4) node[left] {$w_2/2$};
+      \draw [dashed, <->] (2, 5) node[left] {$|P_1-P_2|$} -- (4, 5);
+
+   \end{tikzpicture}
+   \caption{front orthographic projection of an intersection check of two volumes, showing comparison along a single axis}
+   \label{fig:colfig2}
+\end{subfigure}\hfill
+\caption{collision of axis-aligned cuboid bounding volumes}
+\label{fig:collision}
 \end{figure}
 
-Once the position of the vertex has been projected onto the screen in world space, it is then converted to
-screen space by multiplication (by 128 - the pixel width and height of the screen in PICO-8) and displaced
-appropriately by the approximate mid-point of the screen at pixel (64, 64).
+Since the game records the position of game objects through a single three-coordinate vector at the object's
+centre, axis-aligned bounding volumes use a centre-radius representation\cite[p. 78]{ericson}, as seen in
+figure \ref{fig:colfig1}, in which the bounds of the volume are defined by positional data and values for the
+object's height, width, and depth - of which height and width are already used for rendering.
 
-This function is called twice for each sprite drawn, finding the position of the top-left and bottom-right
-corners of its face and then drawing the sprite using PICO-8's in-built scaled sprite function sspr().
+Collisions between objects of this representation are then calculated using a simple series of checks comparing
+the absolute distance between the objects on each axis by the difference of their radius along that axis as
+depicted in figure \ref{fig:colfig2} - here derived as the sum of their relevant extensions divded by two as
+outlined in figure \ref{fig:colequation} and implemented in code in figure \ref{fig:codecollide}.
 
-While the example illustrated in figure \ref{fig:projection} highlights the use of this function
-to project the extreme corners of 2D sprites onto a screen, the same method is also used by the
-program to project the three vertices of triangles onto screen space too - allowing the rendering of
-polygonal shapes such as the player ship and the icosahedral boss enemy shell.
-
-In the implementation highlighted in figure \ref{fig:codeproject} from the software prototype, displacements
-in the \textit{x} and \textit{y} axes was added to represent relative motion of the camera - although this
-effect was later removed from the final version of the game, since it tended to make the
-gameplay harder to reason about spatially.
+\begin{figure}
+   \centering
+   Intersection occurs where:
+   \begin{equation}
+      |P_1 - P_2| < \frac{e_1 + e_2} {2}
+   \end{equation}
+   in the \textit{x}, \textit{y}, and \textit{z}-axes, where $P_1$ and $P_2$ are an object's coordinates on a given axis and
+   $e_1$ and $e_2$ are corresponding values representing the object's extension along that axis
+   \caption{equation for testing the intersection of two cuboid volumes}
+   \label{fig:colequation}
+\end{figure}
 
 \begin{figure}[h]
    \begin{lstlisting}
-   project_vert = function(vect3)
+collides = function(body1, body2)
 
-      return 64 + (((vect3[1] - camera.x) / vect3[3]) * 128), 64 - (((vect3[2] - camera.y) / vect3[3]) * 128)
+   return abs(body1.x - body2.x) < (body1.width + body2.width) / 2 and
+           abs(body1.y - body2.y) < (body1.height + body2.height) / 2 and
+           abs(body1.z - body2.z) < (body1.depth + body2.depth) / 2
 
-   end
+end
    \end{lstlisting}
-   \caption{vertex projection function}
-   \label{fig:codeproject}
+   \caption{a boolean check for collision between two axis-aligned bounding volumes}
+   \label{fig:codecollide}
 \end{figure}
 
-\subsubsection*{Real-time 3D collisions}
-Discuss implementation of cuboid bounding volumes to test for collisions, using
-height, width, and depth data paired if three-dimensional positions to check for
-intersection of volumes. Discuss the need for axis-alignment to significantly
-simplify calculations, and the design implications of this with regard to rotational
-symmetry of objects depicted (ie disc-shaped saucers, and spherical projectiles)
+Several known optimisations have been eschewed in this implementation due to token limits in PICO-8
+imposing a cost to additional code overhead, in addition to the fact that collision-related performance
+bottlenecks have not been encountered - in no small part due to the design decisions mentioned above.
+Therefore, spatial partioning for example has not been implemented. But a more bespoke form of divide-and-conquer
+strategy has been implemented to reduce the number of pairwise collision checks, and avoid the quadratic
+time complexity of naively testing all combinations, by only checking for collisions between specific
+classes of object and rendering other collisions irrelevant to the game.
+
+For example, the player can collide with enemy projectiles and drone enemies, but no check is performed
+for collisions with saucer enemies since their behaviour is such that they never share a horizontal
+plane with the player. Likewise, saucer enemies do not check for collisions with other saucers - they are 
+assumed not to collide, and when collisions do happen in the gameworld the graphical low-fidelity of the
+game allows their intersection to be interpreted perceptually as close-by rather than intersecting motion -
+and, as such, any such intersection has no consequence that needs to be resolved.
+
+\subsubsection*{Graphical effects with 2D sprites and particles}
+
+As indicated in the prior section, techniques to simplify the process of 3D collision detection naturally
+suggested particular decisions for the graphical design of the game - namely a bias towards using rotationally
+symmetrical objects that can be bound to axis-aligned cuboid bounding volumes without concern about object
+rotation in world space.
+
+As such, representations of enemy units as primitive circles were replaced with a simple sprite representing
+a flying saucer as seen in Figure \ref{fig:saucer} - an easily identifiable object, consistent with a science-fiction theme, that contains the
+rough rotational symmetry required by the simplified collision system.
+
+Destruction effects were also added to the game, composed of two components - an animated explosion, which
+served as the background to the effect, and a foreground system of particles in randomly assigned colours
+drawn from the sprite of the destroyed object.
+
+Explosions - represented like other projected objects through a 3D position vector and radius information -
+are animated using progressive radius expansion at a semi-random rate assigned on object initialisation.
+Further animation within the sprite was achieved inexpensively by leveraging the xflip and yflip parameters
+of PICO-8's sspr() function, which allows sprites to be flipped independently in either, neither, or both of the
+\textit{x} and \textit{y} axes. By adding a simple timer to the objects, we are able to create the illusion of
+organic motion within the explosion sprite by arbitrary flipping over time - exploiting intentional asymmetries
+in the sprite's pixel grid as seen in Figure \ref{fig:explosion_sprite}.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=.8\textwidth]{placeholder}
-    \caption{collision of axis aligned cuboid bounding volumes}
-    \label{fig:collision}
+\begin{subfigure}{.45\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{ship_sprite}
+  \caption{a sprite depicting a rotationally symmetrical flying saucer enemy, represented by a cuboid
+  bounding box}
+  \label{fig:saucer}
+\end{subfigure}\hfill
+\begin{subfigure}{.45\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{explosion_sprite}
+  \caption{an explosion sprite with intentional asymmetries, to inexpensively simulate animation through sprite flipping}
+  \label{fig:explosion_sprite}
+\end{subfigure}\hfill
+\caption{sprite designs}
+\label{fig:sprites}
 \end{figure}
+
+Particles, likewise, are spawned on the destruction of an enemy in semi-random numbers and assigned semi-random
+values to make the effect feel unscripted and organic. Particles are assigned colour values corresponding to
+values found in the original enemy sprite, creating an illusion of debris, and then assigned random directions
+and speed factors that execute over a given number of subsequent frames against the backdrop of a randomly
+expanding and flipping explosion animation.
+
+% Describe the implementation of 2D sprites to replace primitive shapes used in earlier
+% iterations of the prototype. Discuss the design considerations that led to the
+% adoption of easily identifiable flying saucer and drone designs. Discuss simple
+% graphical effects used to eg light up flying saucer lights, or spin rotors of
+% enemy drones. Explain implementation of enemy destruction effects - namely the
+% implementation of a simple particle system over the bed of an explosion animation
+% efficiently faked by a combination of progressive scaling and random flipping of a
+% non-symmetrical sprite.
 
 \section{Implementation II: Full implementation}
 
 Following extensive prototyping and the development of a functional software version that
-implemented the core gameplay intended gameplay loop and incorporated both
-perspective-correct sprite projection and polygonal rendering, it was time to start work on
+implemented the core intended gameplay loop and incorporated both perspective-correct sprite projection,
+polygonal rendering, and real-time collision detection in 3D space, it was time to start work on
 the final implementation - starting with a properly designed software architecture and object
 hierarchy that built on the lessons of early prototyping and properly ordered the software in
 a rational, DRY, and polymorphic way.
@@ -547,7 +969,7 @@ Describe how game flow is controlled within the architecture. Descibe how game o
 subclassing of sprite objects and polygonal objects facilitates the blended
 2D/3D rendering approach outlined earlier in a polymorphic way. 
 
-\subsection{Transition to multi-cart design}
+\subsection{Transition to multi-cart design}\label{multicart}
 Discuss late impact of token limit. Discuss decision to eschew imposed limitation of
 PICO-8 and convert game to a multi-cart project. Discuss benefits of approach, including
 introduction of straightforward game start/game over/restart logic based on storage of
@@ -584,7 +1006,9 @@ with bespoke synchronised movement patterns.
 
 Discuss the update operations of individual enemies including bullet collision checks, movement, and
 timed firing. Discuss consequence of bullet collision, and creation of explosion objects - referring back
-to prior section outlining the implementation of the explosion animation and particle effect.
+to prior section outlining the implementation of the explosion animation and particle effect. Discuss
+the decision to use sequential rather than simultaneous movement, its drawbacks, and its suitability for
+a video game system.\cite[p. 16]{ericson}
 
 Discuss player input scheme with particular reference to lock-on system.
 
@@ -623,30 +1047,46 @@ to engage with more traditional HUD elements on the borders of the display.
   \includegraphics[width=.8\linewidth]{boss1}
   \caption{boss mode approach}
   \label{fig:bossfig1}
-\end{subfigure}
+\end{subfigure}\hfill
 \begin{subfigure}{.5\textwidth}
   \centering
   \includegraphics[width=.8\linewidth]{placeholder}
   \caption{boss mode gameplay}
   \label{fig:bossfig2}
-\end{subfigure}
+\end{subfigure}\hfill
 \caption{boss mode}
 \label{fig:boss}
 \end{figure}
 
-\subsection{Some technical topics}
+Discuss thinking behind 3D boss design - with emphasis on opportunity to explore additional way to
+navigate 3D space with similar constraints to rail shooter genre. Compare to boss set-pieces in
+\textit{Panzer Dragoon} and \textit{Rez}.
 
 \subsubsection*{Camera rotations in 3D space}
-Discuss the implementation of camera rotations around a point in 3D space for the
-creation of a ``boss mode'' which involves strafing around a polygonal enemy. Highlight
-the implications of this change on the position and orientation of the player model,
-which can no longer exist naively in a 2D plane facing along the z-axis but which
-must now be able to exist in a rotational relationship to a focal point in the map,
-shared with the camera. Discuss the relationship between in-frame player movement,
-the implied field of view of a 1x1 canvas at single unit distance from pinhole, and
-camera rotation around a point. Discuss the per-object rotations required to execute
-such camera movements, density of spawned scenery, and concerns around computational
-load.
+
+% Discuss the implementation of camera rotations around a point in 3D space for the
+% creation of a ``boss mode'' which involves strafing around a polygonal enemy. 
+
+In order to execute on this concept, a new camera mode had to be built for the game.
+Whereas the general course of play sees the camera in a fixed position at origin, looking
+along the \textit{z}-axis while enemies and geometry scroll towards it and the player
+model moves in a fixed two-dimensional plane parallel to the viewport, a boss setpiece in
+which the player ship strafes around a polygonal enemy required the camera to sweep in a 
+circle around the boss.
+
+Camera transformations, in this implementation, work on the principle that real camera
+transformations and the application of contrary transformations on scenery objects
+produce like results. As such, as illustrated in Figure \ref{fig:rotation}, camera transformations
+in this mode are accomplished by transforming world scenery to simulate the movement of the camera.
+
+In this example, to rotate objects in a scene around an arbitrary point, the objects are
+translated by the inverse of the position vector of the point of rotation, rotated around
+origin, and translated by by the positive position vector of the initial point.
+
+As implemented in the game, this means that objects in the game world are rotated around
+the position of the boss - at coordinates (0, 0, 5) - in the opposite direction to the
+putitive movement of the camera as generated by player input, in order to generate the
+phenomeon of a camera sweeping through space.
 
 \begin{figure}[h]
 \begin{subfigure}{.45\textwidth}
@@ -776,6 +1216,32 @@ load.
 \label{fig:rotation}
 \end{figure}
 
+% Highlight the implications of this change on the position and orientation of the player model,
+% which can no longer exist naively in a 2D plane facing along the z-axis but which
+% must now be able to exist in a rotational relationship to a focal point in the map,
+% shared with the camera.
+
+This change also forced reconsideration of how the position of the player is defined
+in the game world, and associated issues such as direction of fire. Whereas the position
+of the player ship had previously been defined as a point in 3D space confined to a 2D
+plane parallel to the camera viewport, free-firing projectiles directly down the \textit{z}-axis,
+strafing motion around a stationary boss setpiece required the position of the ship to instead
+be defined by an angle around a unit circle.
+
+Two alternative approaches to free-firing under this new approach were considered. Firstly,
+the technically correct approach, would see the ship firing directly forward as it faced - with
+the unfortunate implication that all shots would ultimately travel through the centre of
+rotation, and thus cause undue constraint on player action. The alternative, which was adopted,
+saw the ship maintain its freedom to fire from arbitrary points on a 2D plane by directing
+bullets down the direction faced by the camera rather than the player ship - a trade-off
+that favoured game feel over accurate simulation.
+
+% Discuss the relationship between in-frame player movement,
+% the implied field of view of a 1x1 canvas at single unit distance from pinhole, and
+% camera rotation around a point. Discuss the per-object rotations required to execute
+% such camera movements, density of spawned scenery, and concerns around computational
+% load.
+
 \subsubsection*{Ray-triangle collision with the Möller–Trumbore algorithm}
 Discuss the need for more complex ray-triangle intersection computations to effectively
 test for collisions around the boss enemy, since the intended design requires per-face
@@ -851,7 +1317,7 @@ low-fi sound system - with equal recognition of creative limitations of develope
   \caption{an example of shmup gameplay, entered into seamlessly from a traditional rail-shooter section, in \textit{Split Fiction}}
   \label{fig:shmup}
 \end{subfigure}\hfill
-\caption{boss mode}
+\caption{additional game mode}
 \label{fig:additionalmodes}
 \end{figure}
 
@@ -868,7 +1334,17 @@ of \textit{Split Fiction} and seamless transition between game modes. Discuss fe
 existing codebase.
 
 \subsection{Change of technology}
+
+As outlined in Section \ref{pico}, PICO-8 is an excellent prototyping tool. But it is inherently
+limited, and one obvious course of future work would be to translate the game to more robust technology
+and explore the creative possibilities unlocked by a less constrained development environment - most
+notabily in graphical effects and in sound synchronisation.
+
 \subsubsection*{Fully-featured game engine: Unreal, Unity, Godot}
+Briefly outline various off-the-shelf 3D game engines. Discuss the pros and cons with working with
+established technology including robust systems for handling 3D rendering and camera activity. Discuss
+drawbacks of the technology. 
+
 \subsubsection*{Minimal game development library: raylib}
 Discuss possible alternative benefits of developing using a minimal library like raylib,
 which offers similarly freeform low-overhead development to PICO-8 without extraneous
