@@ -1,23 +1,26 @@
-\contentsline {section}{\numberline {1}Introduction, aims, and objectives}{2}{}%
-\contentsline {section}{\numberline {2}Background and context}{2}{}%
-\contentsline {subsection}{\numberline {2.1}The rail shooter}{2}{}%
-\contentsline {subsection}{\numberline {2.2}PICO-8}{4}{}%
-\contentsline {section}{\numberline {3}Implementation I: Prototyping}{7}{}%
-\contentsline {subsection}{\numberline {3.1}Paper prototyping, software prototyping, and 3D rendering test}{7}{}%
-\contentsline {subsection}{\numberline {3.2}3D conversion of software prototype}{9}{}%
-\contentsline {section}{\numberline {4}Implementation II: Full implementation}{15}{}%
-\contentsline {subsection}{\numberline {4.1}Settled software architecture and object hierarchy}{16}{}%
-\contentsline {subsection}{\numberline {4.2}Transition to multi-cart design}{16}{}%
-\contentsline {subsection}{\numberline {4.3}The core game loop}{16}{}%
-\contentsline {subsection}{\numberline {4.4}Boss mode}{18}{}%
-\contentsline {section}{\numberline {5}Results}{20}{}%
-\contentsline {subsection}{\numberline {5.1}Think-aloud testing feedback}{20}{}%
-\contentsline {subsection}{\numberline {5.2}Formal NASA-TLX testing}{20}{}%
-\contentsline {section}{\numberline {6}Evaluation}{21}{}%
-\contentsline {subsection}{\numberline {6.1}Pitfalls of paper prototyping for 3D projects}{21}{}%
-\contentsline {subsection}{\numberline {6.2}Artificial limits imposed by featly to platform ethos}{21}{}%
-\contentsline {subsection}{\numberline {6.3}Unavoidable limitations imposed by PICO-8}{21}{}%
-\contentsline {section}{\numberline {7}Further work}{21}{}%
-\contentsline {subsection}{\numberline {7.1}Additional mode development}{21}{}%
-\contentsline {subsection}{\numberline {7.2}Change of technology}{22}{}%
-\contentsline {section}{\numberline {8}Conclusion}{22}{}%
+\contentsline {section}{\numberline {1}Introduction, aims, and objectives}{4}{}%
+\contentsline {section}{\numberline {2}Background and context}{4}{}%
+\contentsline {subsection}{\numberline {2.1}The rail shooter}{4}{}%
+\contentsline {subsection}{\numberline {2.2}PICO-8}{6}{}%
+\contentsline {section}{\numberline {3}Implementation I: Prototyping}{10}{}%
+\contentsline {subsection}{\numberline {3.1}Paper prototyping, software prototyping, and 3D rendering test}{10}{}%
+\contentsline {subsection}{\numberline {3.2}3D conversion of software prototype}{12}{}%
+\contentsline {section}{\numberline {4}Implementation II: Full implementation}{18}{}%
+\contentsline {subsection}{\numberline {4.1}Settled software architecture and object hierarchy}{19}{}%
+\contentsline {subsection}{\numberline {4.2}The core game loop}{19}{}%
+\contentsline {subsection}{\numberline {4.3}The update loop}{20}{}%
+\contentsline {subsection}{\numberline {4.4}The draw loop}{23}{}%
+\contentsline {subsection}{\numberline {4.5}Transition to multi-cart design}{24}{}%
+\contentsline {subsection}{\numberline {4.6}Boss mode}{24}{}%
+\contentsline {section}{\numberline {5}Results}{27}{}%
+\contentsline {subsection}{\numberline {5.1}Think-aloud testing feedback}{27}{}%
+\contentsline {subsection}{\numberline {5.2}Formal NASA-TLX testing}{27}{}%
+\contentsline {section}{\numberline {6}Evaluation}{27}{}%
+\contentsline {subsection}{\numberline {6.1}Pitfalls of paper prototyping for 3D projects}{27}{}%
+\contentsline {subsection}{\numberline {6.2}Artificial limits imposed by featly to platform ethos}{28}{}%
+\contentsline {subsection}{\numberline {6.3}Unavoidable limitations imposed by PICO-8}{28}{}%
+\contentsline {section}{\numberline {7}Further work}{28}{}%
+\contentsline {subsection}{\numberline {7.1}Additional testing and mechanical pivots}{28}{}%
+\contentsline {subsection}{\numberline {7.2}Additional mode development}{28}{}%
+\contentsline {subsection}{\numberline {7.3}Change of technology}{29}{}%
+\contentsline {section}{\numberline {8}Conclusion}{29}{}%

@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[11pt]{article}
 
 \usepackage{graphicx} % Required for inserting images
 \graphicspath{ {./images/} }
@@ -8,6 +8,7 @@
 \addbibresource{references.bib}
 
 \usepackage{csquotes}
+\usepackage{dirtytalk}
 
 \usepackage{tikz}
 \usetikzlibrary{arrows,intersections,calc}
@@ -16,6 +17,9 @@
 
 \usepackage{listings}
 \usepackage{color}
+
+\usepackage{geometry}
+\geometry{margin=3cm}
 
 \DeclareMathSymbol{*}{\mathbin}{symbols}{"01}
 
@@ -42,14 +46,74 @@
 
 \renewcommand{\abstractname}{Executive Summary}
 
-\title{A three-dimensional rail shooter in PICO-8}
-\author{Harry Jackson}
-\date{September 2025}
+% \title{A three-dimensional rail shooter in PICO-8}
+% \author{Harry Jackson}
+% \date{September 2025}
 
 \begin{document}
-\maketitle
+% \maketitle
 
-\begin{abstract}
+\begin{titlepage}
+   \begin{center}
+       \vspace*{1cm}
+
+       \huge
+       \textbf{A three-dimensional rail shooter in PICO-8}
+
+       \vspace{1.5cm}
+
+       \large
+       \textbf{Harry Jackson}
+
+       \vspace{0.5cm}
+
+       Supervised by Dr John Lapinskas
+
+       \vfill
+            
+       A dissertation submitted to the University of Bristol in accordance
+       with the requirements of the degree of Master of Science in
+       the Faculty of Engineering.
+            
+       \vspace{0.8cm}
+     
+       \includegraphics[width=0.4\textwidth]{university}
+
+       \vspace{0.8cm}
+            
+       Department of Computer Science\\
+       University of Bristol\\
+       September 2025\\
+            
+   \end{center}
+\end{titlepage}
+
+\section*{Author's declaration}
+
+\vspace{0.5cm}
+
+I declare that the work in this dissertation was carried out in accordance with the
+requirements of the University’s Regulations and Code of Practice for Research
+Degree Programmes and that it has not been submitted for any other academic
+award. Except where indicated by specific reference in the text, the work is the
+candidate’s own work. Work done in collaboration with, or with the assistance of,
+others, is indicated as such. Any views expressed in the dissertation are those of the
+author.
+
+\vspace{0.5cm}
+
+Signed:
+
+\includegraphics[width=0.8\textwidth]{signature}
+
+Date: 2 September 2025
+
+\newpage
+
+\section*{Executive summary}
+
+\vspace{0.5cm}
+
 The rail shooter was one of the earliest attempts to bring video
 games into the third-dimension - first through the use of pseudo-3D
 scaling effects, and later through the use of real-time polygonal graphics.
@@ -59,19 +123,33 @@ modern implementation incorportating polygonal rendering for PICO-8 - a
 ``fantasy console'' which replicates the computational and data constraints of
 historical system hardware on which developers typically eschewed polygonal
 rendering for simpler 2D effects.
-\end{abstract}
+
+\vspace{1.5cm}
 
 \section*{Acknowledgements}
 
+\vspace{0.5cm}
+
+I would like to thank my supervisor Dr John Lapinskas for his advice and guidance
+throughout the project.
+
+\newpage
+
 \tableofcontents
 
+\newpage
+
 \section{Introduction, aims, and objectives}
+
+The project repo, including a standalone version of the game, is available on GitHub at 
+\url{https://github.com/hjx92/msc-project}
+
 [To be outlined and written after composition of rest of main body]
 
 
 \section{Background and context}
 
-\subsection{The rail shooter}
+\subsection{The rail shooter}\label{genre}
 
 \subsubsection*{Historical outline}
 Give broad overview of significance of rail shooters in the development of approaches
@@ -79,7 +157,7 @@ to 3D game design and chart their development with a focus on:
 
 Early entires in the genre relied primarily on sprite-scaling effects facilitated first by
 Sega's Super Scaler arcade board, and later (in more primitve form) by the publisher's
-home consoles. \textit{Space Harrier}, which debuted on the Super Scaler board in 1985, demonstrated
+home consoles. \textit{Space Harrier}\cite{space_harrier}, which debuted on the Super Scaler board in 1985, demonstrated
 the utility of the approach for fast paced action combat games, allowing players to enter a bizarre
 fantasy sci-fi world in which an unnamed space man levitates through space and blasts a variety of
 enemy craft and alien creatures with a powerful energy gun. Meanwhile \textit{Hang-On} showcased its use
@@ -93,18 +171,18 @@ transformations on them, such as real-time rotation. Of these later entries, \te
 most notable of the rail shooters, allowing players to take control of a supersonic fighter jet, while
 \textit{Outrun} remains the most iconic of the Super Scaler driving games.
 
-In 1993, Argonaut Software's acclaimed title \textit{Star Fox} for the Super Nintendo Entertainment
+In 1993, Argonaut Software's acclaimed title \textit{Star Fox}\cite{star_fox} for the Super Nintendo Entertainment
 System took the genre a step further with the integration of real-time polygonal graphics. Auguemting
 the SNES with the Super FX chip - an on-cartridge co-processor for graphics acceleration -
 \textit{Star Fox} saw players traverse worlds with polygonal enemies and simple 3D world geometry,
 engaging in the genre's staple aim-and-shoot gameplay while also moving through gates.
 
-Sega's 1995 title \textit{Panzer Dragoon}, launched for the Sega Saturn before its international
+Sega's 1995 title \textit{Panzer Dragoon}\cite{panzer_dragoon}, launched for the Sega Saturn before its international
 rollout, brought richer texture-mapped 3D worlds and a celebrated orchestral soundrack by composer
 Yoshitaka Azuma, once again showcasing advances in home console technology - in this case, the
 shift to less memory constrained disc-based media.
 
-The genre reached its artist apotheosis with \textit{Rez} in 2001 for the Sega Dreamcast.
+The genre reached its artist apotheosis with \textit{Rez}\cite{rez} in 2001 for the Sega Dreamcast.
 The game uses wireframe graphics to depict a hacker's infiltration of a computer system, and exploits the
 scripted nature of the genre by synchonising gameplay to an intense techno music soundtrack.
 
@@ -156,6 +234,15 @@ the player moves in a straight line with limited freedom to veer (without gamepl
 while later entries in the genre guided players through more complex spatial compositions incorportating
 curves and varied levels of elevation.
 
+These games stand in contrast to games in two other related genres in ways which are illustrative.
+They differ from gallery shooting games such as \textit{Virtua Cop} and \textit{Time Crisis}, which
+often functioned with a physical gun peripheral, because the player remains in constant motion in
+a rail shooter whereas gallery shooting games are generally played from a fixed position in the world
+with player movement control typically limited to entering or exiting a form of cover. They also
+differ from aerial combat games such as \textit{Ace Combat} for the opposite reason - whereas such
+games allow players to navigate their ship freely in 3D space, the rail shooter confines movement to
+a fixed plane moving through a scripted path.
+
 Player movement typically doubles up as player aiming too - in early iterations of the genre like
 \textit{Space Harrier} and \textit{Star Fox}, movement is tied directly to the player's aim in a
 linear fashion, and in later polygonal titles the player directly controls the player's targetting
@@ -168,9 +255,14 @@ gaming, and largely fell out of fashion before dual analogue input became ubiqui
 % investigate camera controls in PD Orta, PD Remake, and Rez Infinite...
 
 Later games in the cycle did contain rudimentary camera controls, however, with \textit{Panzer Dragoon}
-allowing players to rotate the camera in 90 degree chunks using the Sega Saturn's shoulder inputs.
+allowing players to rotate the camera in 90 degree incerments using the Sega Saturn's shoulder inputs.
 Players were able to see the location of off-camera enemies via a low fidelity radar in the heads up
 display, requiring strategic decision making about which of four directions to shoot from.
+
+This degree of freedom did not follow in all subsequent entries in the genre, highlighting the importance
+of scripting from a design standpoint - in \textit{Rez} for example, camera rotations around the player
+do occur, but without intervention from the player and in order to facilitate scripted action
+set pieces that occur from different directions.
 
 % Discuss boss set pieces - eg multisprite enemies in Space Harrier, ship in Dragoon, sphere in Rez
 \subsubsection*{Genre pitfalls}
@@ -179,20 +271,47 @@ limited room for gameplay innovation and discuss their waning significance in
 commercial game design - with appropriate counter-examples of cult following for
 balance.
 
+Although dedicated commercial rail shooters are now virtually extinct, the gameplay mechanics
+do live on in sections of popular games - where players lose free control of player movement
+and engage in ``moving shooting galleries''. Some notable examples include \textit{Yakuza Zero}
+and \textit{some other game with an on-rails shooting section}
+
 \subsection{PICO-8}\label{pico}
 
-Brief discussion of decision-making process involved in choosing PICO-8 as tool, with focus on
-project scope, interest in technical implementation details, and 3D modelling demands of building
-such a game in an off-the-shelf 3D game engine ala Unreal or Unity.
+% Brief discussion of decision-making process involved in choosing PICO-8 as tool, with focus on
+% project scope, interest in technical implementation details, and 3D modelling demands of building
+% such a game in an off-the-shelf 3D game engine ala Unreal or Unity.
+
+One of the initial decisions taken in the project was to settle on an appropriate technology
+for building the software. The reasons for choosing PICO-8, and a brief introduction to the
+system, will occupy the rest of this section.
+
+The most obvious alternative was to use a fully featured off-the-shelf game engine such as
+Unity or Godot. This was rejected at the outset for two principle reasons: firstly, the
+use of an existing 3D engine with comprehensive given systems functionality (in, for example,
+control and manipulation of 3D cameras and collision detection) would have shifted the focus
+of the project away from systems implementation and towards less well defined design issues,
+risking scope creep in a time-constrained project; secondly, the use of an existing 3D engine
+would have increased expectations in dangerous way with regards to aesthetic fit and finish,
+turning the project into an exercise in 3D modelling and texturing; and thirdly, these options 
+would have introduced additional burdens in build and portability that are not shared by PICO-8.
+
+The benefits of using off-the-shelf technology is discussed further, and retrospectively, in
+Section \ref{engines}.
+
 \subsubsection*{Introduction to PICO-8}
 % Discuss ethos of PICO-8 as a ``fantasy console'' and outline its technical
 % specification - emphasis on compute power, memory limitations, screen resolution,
 % player inputs, and token limits - and indicate some of the implications of these
 % constraints on project scope.
 
-... PICO-8 preamble ...
+Developed by Joseph White, aka zep, and initial released in 2015, PICO-8 is a 
+fantasy console modelled on the aesthetic of an 8-bit home console (such as,
+for reference, the Nintendo Entertainement System or the Sega Master System).
 
-The system is built around the following key constraints\cite{white}:
+The system is built around the following key constraints\cite{white}, which replicate
+the aesthetic constraints of an 8-bit game console while offering a somewhat more
+generous compute capability:
 
 \begin{itemize}
    \item a 128x128 pixel display
@@ -201,12 +320,90 @@ The system is built around the following key constraints\cite{white}:
    \item a sheet of 128 8x8 sprites
 \end{itemize}
 
+% insert table of comparison - PICO vs NES vs MS vs SNES vs MD
+
+Rough comparison of PICO-8 with popular home consoles of the 8-bit era, as
+shown in Figure \ref{fig:consolecomparison}, reveals a system with roughly the same
+compute power as the Master System and more than twice the compute of the Nintendo
+Entertainment System (NES), while having a coarser pixel grid than either and
+a more limited colour palette. Note that the emulated 4 MHz CPU of the PICO-8 system
+is emulated by allowing four million virtual instructions per second and does not
+map neatly to the actual performance of a hardware CPU clocked at 4 Mhz, where more
+complex issues of efficient cycle utilisation will be apparent.
+
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{r|c|c|c}
+      & PICO-8 & Master System\cite{mastersystem} & NES\cite{nes} \\
+     \hline
+     CPU & 4 Mhz & 4 Mhz & 1.66 Mhz (PAL) \\
+     Display & 128 x 128 & 256 x 192 & 256 x 240 \\
+     Colour palette & 16 & 64 & 52 \\
+\end{tabular}
+\end{center}
+\caption{PICO-8 compared to 8-bit home consoles}
+\label{fig:consolecomparison}
+\end{figure}
+
+PICO-8 games are written in the a cut down version of the Lua scripting language -
+schewing Lua's standard library and instead implementing a bespoke collection of
+global functions. This has several advantages for PICO-8 as a prototyping platform... 
+% INSERT REASONS LOL
+
+One oddity of the Lua programming language, particularly from the point of view of
+game development, is that it is not a traditional object-oriented programming language
+insofar as it does not have classes. Nonetheless, a form of prototype-based object orientation
+is possible in the language and is used in the project. As the language's creator Roberto Ierusalimschy
+explains\cite[p. 151]{ierusalimschy}, \say{each object may have a prototype, which is a regular object where
+the first object looks up any operation that it does not know about. To
+represent a class in such languages, we simply create an object to be used
+exclusively as a prototype for other objects (its instances). Both classes and prototypes work as a place
+to put behavior to be shared by several objects.}
+
 \subsubsection*{PICO-8 as prototyping tool}
-Discuss benefits of using PICO-8 as a tool for rapid creation and iteration of
-game prototypes, compare and contrast to full 3D engines like Unity, Godot and Unreal,
-describe suitability given fixed time constraints of an individual summer
-project, and point to games successfully prototyped in PICO-8 (most notably
-\textit{Celeste}).
+% Discuss benefits of using PICO-8 as a tool for rapid creation and iteration of
+% game prototypes, compare and contrast to full 3D engines like Unity, Godot and Unreal,
+% describe suitability given fixed time constraints of an individual summer
+% project, and point to games successfully prototyped in PICO-8 (most notably
+% \textit{Celeste}).
+
+PICO-8 has significant advantages as a tool for rapid prototyping, and has been used
+effectively as a prototyping tool for commercial game projects - most notably
+acclaimed 2018 platformer \textit{Celeste}, which began life in a 2015 PICO-8 game jam.
+
+The principle reasons for its effectiveness as a prototyping tool largely complement the
+reasons for not adopting an off-the-shelf game engine, outlined above. Namely: PICO-8
+has no complex build process and allows rapid tweaking and iteration; PICO-8 is extremely
+portable and, because of its low demand on hardware, performance is guaranteed across a large
+range of devices - allowing development to proceed with respect for a known and unchanging
+frame budget; and the constraints generated by the system generally prevent scope creep and force
+developer focus on essentials.
+
+Additionally, while offering a lightweight development environment without the burdens
+imposed by an off-the-shelf engine, PICO-8 does offer a fairly comprehensive suite of
+features for getting game projects started quickly - including an \textunderscore update()
+and \textunderscore draw()
+loop to execute the game, facilities for drawing primitive objects and sprites
+to the screen painlessly, simple controls for playing audio across four channels, and
+in-built functionality for designing sprites and composing sound effects as shown in Figure
+\ref{fig:pico}.
+
+\begin{figure}[h]
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{sprite_editor}
+  \caption{PICO-8's in-built sprite editor}
+  \label{fig:pfig1}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.8\linewidth]{audio_editor}
+  \caption{PICO-8's in-built audio editor}
+  \label{fig:pfig2}
+\end{subfigure}
+\caption{PICO-8 asset creation suite}
+\label{fig:pico}
+\end{figure}
 
 \subsubsection*{Sprite-scaling functionality}
 % Discuss PICO-8's given functionality for sprite drawing and scaling and explain how
@@ -215,19 +412,24 @@ project, and point to games successfully prototyped in PICO-8 (most notably
 One specific advantage of using PICO-8 for this project, in addition to its general
 advantages as a prototyping tool, is in-built support not only for drawing sprites
 from a sheet but also for dynamically scaling sprites - the core rendering technique
-that underlies the early Super Scaler games outlined in the previous section.
+that underlies the early Super Scaler games outlined in Section \ref{genre}.
 
 In addition to the standard sprite drawing call spr() - which is ideally suited to
 typical 2D games in which sprites are drawn at a constant size - PICO-8 also offers
-an sspr() function that allows the programmer to dynamically scale and stretch sprites.
-This, wrapped in functionality to project points in 3D space to points on a 2D screen,
-allows the sort of sprite scaling that can simulate depth in 3D space among
-multiple 2D sprite assets.
+an sspr() function that allows the programmer to dynamically scale and stretch sprites
+by selecting the extreme corners of a rectangle in screen space into which the sprite
+will be deformed and drawn. This, wrapped in functionality to project points in 3D space
+to points on a 2D screen, allows the sort of sprite scaling that can simulate depth in 3D
+space among multiple 2D sprite assets. This process is described in greater detail in
+Section \ref{conversion}.
 
 Where PICO-8 is disadvantaged is in the lack of support for arbitrary rotation of sprites -
 a limitation imposed both by PICO-8's effort to emulate 8-bit games systems, which did not yet
 have this facility, but also by the coarseness of the platform's pixel grid and the low fidelity
-of accompanying sprites which resist easy rotation around small angles.
+of accompanying sprites which resist easy rotation around small angles. So, whereas late
+Super Scaler games like \textit{After Burner} could increase immersion by easily allowing
+camera tilting - simulating a degree of aircraft roll in that case - this project will
+draw from a more limited set of possibilities in camera control.
 
 \subsubsection*{Extensibility of 2D primatives for 3D}
 % Discuss \textit{Star Fox} as exemplar polygonal rail shooter built within similar
@@ -243,6 +445,8 @@ hardware to drive polygon rendering which is beyond PICO-8 only in scale.
 Since, at root, polygonal rendering only requires the ability to draw triangles onto a
 screen, PICO-8 can therefore perform the requisite functions if given primitive shape calls such
 as line() and rectfill() are appropriately extended to draw filled shapes between three points.
+The extension of these functions, to draw triangles and render polygonal models composed of
+triangles, is discussed in Section \ref{prototyping}.
 
 \subsubsection*{3D experimentation in PICO-8}
 Broad overview of existing experimentation with polygonal 3D in PICO-8 with a
@@ -302,10 +506,25 @@ together using load and run calls.
 This approach will be discussed in more detail in Section \ref{multicart}, since it was an
 approach ultimately taken in the final stretch of the project.
 
+% Constraints
+
+The choice of technology does also impose constraints that cannot be easily mitigated, and
+instead will simply determine aspects of the game's design. As mentioned above, the system
+does not have native support for sprite rotation and as such credible camera tilting is simply
+not feasible as a technique.
+
+Likewise, the limited number of player inputs (four directions and
+two face buttons) minimise the range of actions available to the player - combinations of inputs
+(for example, holding B while using directions) would allow us to expand the actions available
+to the player, but at an obvious cost to intuition. This constraint can also be seen to
+compound with other constraints - for example, a combination of face button and direction
+button could facilitate a real-time camera rotation, but the coarseness of PICO-8's pixel
+grid would make it difficult to communicate the clear radar information required to
+make decisions about camera control meaningful in the first place.
 
 \section{Implementation I: Prototyping}
 
-\subsection{Paper prototyping, software prototyping, and 3D rendering test}
+\subsection{Paper prototyping, software prototyping, and 3D rendering test}\label{prototyping}
 The prototyping phase of the project began with three pieces of work along two tracks: firstly,
 a paper prototype concretising the core gameplay loop, in which the player moves forward through
 space and encounters enemies, and a software implementation of that paper prototype in PICO-8; and
@@ -331,18 +550,61 @@ allowing me to start getting to grips with the basic ideas behind real-time rend
 \label{fig:gameprototype}
 \end{figure}
 
-Referring back to the gameplay taxonomy conducted in the background section, explain
-how the most significant user actions were distilled down to fit a six-input
-gamepad. Showcase how this was modelled using a flat paper prototype and outline
-how this was translated into a software prototype using primitive shapes to model
-the player and randomly spawned enemies, with movement and interactions being
-directly translated into screen-space.
+% Referring back to the gameplay taxonomy conducted in the background section, explain
+% how the most significant user actions were distilled down to fit a six-input
+% gamepad. Showcase how this was modelled using a flat paper prototype and outline
+% how this was translated into a software prototype using primitive shapes to model
+% the player and randomly spawned enemies, with movement and interactions being
+% directly translated into screen-space.
 
-Highlight issues already identified at this early stage of prototyping - such as
-player model blocking, the relationship between the player reticle and the destination
-of projectiles in hypothecated 3D space, the need for limitations on enemy
-target locking, and the need for game objects to have a meaningful existence in 3D
-space.
+The primary purpose of the initial paper prototype was to distill the core essence of the
+genre, as outlined in the gameplay taxonomy of Section \ref{genre}, into an interactive
+medium that allowed easy play with various gameplay elements - examining, for example,
+the possible relationships between a player sprite and its firing reticle, and possible
+patterns of enemy movement.
+
+Because of the limitations of prototyping on paper, this
+phase focused on fairly linear gameplay in which the player moved forward along a straight
+path and encountered enemies who existed along a single hypothetical plane in front of
+the player, as can be seen in \ref{fig:pfig1}.
+
+Several basic features of the game were explored through this prototype, including the
+motion of projectiles in screen space between the player sprite and its reticle, the
+motion of enemy projectiles towards the player, and the use of a lock-on mechanic akin to
+that implemented in \textit{Panzer Dragoon} and \textit{Rez}.
+
+Following construction of this rudimentary paper prototype, work began on a light software
+prototype describing the same basic game behaviours, as seen in \ref{fig:pfig2}, based on the
+use of PICO-8's drawing functions for primitive shapes - in this case, rect(), rectfill(),
+circfill(), and line().
+
+In this version, the player primarily controls the firing reticle rather than the player sprite,
+with the relationship between sprite and reticle defined by their distance from the centre of the
+screen - the player reticle is bound to an internal box in screen space, and to create an easy
+illusion of depth, the player sprite (here simply a hollow rectangle) is drawn closer to the
+real edge of the screen by a linear factor.
+
+Developing out of the paper prototype, much of the logic of this initial software prototype occurs
+in screen space, rather than being projected out from a hypothecated 3D world space. Advancing on
+the paper prototype, a simple illusion of movement in depth is given to the circular enemy shapes
+through naive enlargement in screen space, but bullets still move linearly across the screen instead
+of accurately rendering perspective-correct movement through depth.
+
+% Highlight issues already identified at this early stage of prototyping - such as
+% player model blocking, the relationship between the player reticle and the destination
+% of projectiles in hypothecated 3D space, the need for limitations on enemy
+% target locking, and the need for game objects to have a meaningful existence in 3D
+% space.
+
+The benefits and pitfalls of paper prototyping for a 3D game project, and its impact on the
+direction of the initial software prototype, are discussed further and retrospectively in
+Section \ref{prototypepitfalls}.
+
+Briefly, in addition to developing comfort with the basic structure of the game and beginning
+to define its basic behaviours, the paper prototype and initial software prototype revealed the
+need to start grappling with the design of a correct 3D system, in which objects have positions
+in depth as well as along the axes of a screen. This phase of development will be discussed in
+Section \ref{conversion}.
 
 \subsubsection*{Simple 3D renderer with model scaling and rotations}
 
@@ -866,9 +1128,9 @@ outlined in figure \ref{fig:colequation} and implemented in code in figure \ref{
    \begin{lstlisting}
 collides = function(body1, body2)
 
-   return abs(body1.x - body2.x) < (body1.width + body2.width) / 2 and
-           abs(body1.y - body2.y) < (body1.height + body2.height) / 2 and
-           abs(body1.z - body2.z) < (body1.depth + body2.depth) / 2
+   return abs(body1.x - body2.x) < (body1.width + body2.width)/2 and
+         abs(body1.y - body2.y) < (body1.height + body2.height)/2 and
+         abs(body1.z - body2.z) < (body1.depth + body2.depth)/2
 
 end
    \end{lstlisting}
@@ -925,7 +1187,7 @@ in the sprite's pixel grid as seen in Figure \ref{fig:explosion_sprite}.
 \begin{subfigure}{.45\textwidth}
   \centering
   \includegraphics[width=.8\linewidth]{explosion_sprite}
-  \caption{an explosion sprite with intentional asymmetries, to inexpensively simulate animation through sprite flipping}
+  \caption{an explosion sprite with intentional asymmetries, to simulate animation through sprite flipping}
   \label{fig:explosion_sprite}
 \end{subfigure}\hfill
 \caption{sprite designs}
@@ -950,14 +1212,14 @@ expanding and flipping explosion animation.
 \section{Implementation II: Full implementation}
 
 Following extensive prototyping and the development of a functional software version that
-implemented the core intended gameplay loop and incorporated both perspective-correct sprite projection,
+implemented the core intended gameplay loop and incorporated perspective-correct sprite projection,
 polygonal rendering, and real-time collision detection in 3D space, it was time to start work on
 the final implementation - starting with a properly designed software architecture and object
 hierarchy that built on the lessons of early prototyping and properly ordered the software in
 a rational, DRY, and polymorphic way.
 
 In addition to a significant ground-up reworking of the second software prototype, development
-also began on the end-game boss - featuring a more interactive polygonal element - and associated
+also began on the end-game boss - featuring a more interactive polygonal element and associated
 problems with 3D geometry. This phase of the project also, ultimately, saw the project shift toward
 a multicart design following a late encounter with PICO-8 token limits.
 
@@ -969,18 +1231,45 @@ Describe how game flow is controlled within the architecture. Descibe how game o
 subclassing of sprite objects and polygonal objects facilitates the blended
 2D/3D rendering approach outlined earlier in a polymorphic way. 
 
-\subsection{Transition to multi-cart design}\label{multicart}
-Discuss late impact of token limit. Discuss decision to eschew imposed limitation of
-PICO-8 and convert game to a multi-cart project. Discuss benefits of approach, including
-introduction of straightforward game start/game over/restart logic based on storage of
-pertinent persistent data and use of cart reloading. 
+As discussed in Section \ref{pico}, Lua is not a traditionally object-oriented programming
+languages with classes. As such, object orientation is achieved through object prototyping and
+is here implemented at cart initialisation through the comprehensive setting of metatables
+to define the intended hierarchy of classes (or, rather, object prototypes) as shown in Figure
+\ref{fig:codeinheritance}.
+
+\begin{figure}[h]
+   \begin{lstlisting}
+function _init()
+
+   -- set up inheritance heirarchy
+   setmetatable(sprite_object, {__index = game_object})
+   setmetatable(polygonal_object, {__index = game_object})
+
+   -- tables that inherit from sprite_object
+   setmetatable(scenery_object, {__index = sprite_object})
+   setmetatable(enemy, {__index = sprite_object})
+   setmetatable(drone, {__index = sprite_object})
+   setmetatable(explosion, {__index = sprite_object})
+   setmetatable(pickup, {__index = sprite_object})
+   setmetatable(bullet, {__index = sprite_object})
+
+   -- tables that inherit from polygonal_object
+   setmetatable(player, {__index = polygonal_object})
+
+end
+   \end{lstlisting}
+   \caption{a prototype-based inheritence hierarchy established at cart initialisation}
+   \label{fig:codeinheritance}
+\end{figure}
 
 \subsection{The core game loop}
-Describe the core gameplay loop and give a comprehensive tour of the update and draw
-functions in main.lua that execute it, explaining the rationale for event and draw
-sequencing. Discuss the z-sort implementation in draw, comparing to alternative sorting
-algortithms, and describe how polymorphic class design enables heterogeneous elements
-to be drawn together in the correct depth ordering.
+As discussed in Section \ref{pico}, PICO-8 gives the developer the basic functionality
+of a game loop - namely, \textunderscore update() and \textunderscore draw() functions that
+are called repeatedly to
+simulate and render the action of the game at the chosen refresh rate (here, 30Hz).
+In this section, we will walk through the logic implemented in each of these two functions
+to execute the game - referring back to Section \ref{conversion} where appropriate, if
+functionality was carried over from the earlier 3D prototype.
 
 \begin{figure}[h]
     \centering
@@ -989,20 +1278,95 @@ to be drawn together in the correct depth ordering.
     \label{fig:3dfinal}
 \end{figure}
 
-\subsubsection*{The update loop}
-Discuss gameworld object.
+\subsection{The update loop}
 
-Outline update process of gameworld: character health check and possible exit to Game Over screen,
-management of particular gameplay wave including generation of a new wave if necessary, followed by
-an update of the existing or new wave, player update including inputs, followed finally by management
-of game scenery, bullets, and various pick-up items.
+\subsubsection*{Updating the gameworld}
+The given \textunderscore update() loop present in the main game file simply calls one
+function: the update() function of the game\textunderscore world table.
 
-Discuss the use of multicarting to control game menus, reset game state, and transition to boss mode
-if the given wave target is reached.
+First we perform a simple check for player death with a branch that executes if the
+life of our player is less than or equal to zero. If this is the case, we check if
+the player's current score is higher than the cart's high score, and reassign the
+cart's high score in persistent cart data if so. Finally, we pass control back to
+the menu cart with a load() call.
 
-Discuss the operations involved in the wave class - including selection of wave type, and how various
-types of wave operate at initialisation and over the first 300 ticks of gameplay to generate enemies
-with bespoke synchronised movement patterns.
+If the player has not died, control passes to logic that controls our current enemy
+wave. We will discuss the internal functioning of enemy waves below, but at a high level
+we check if a wave has been completed and, if so, adjust the global
+speed\textunderscore factor of the game as a naive tuner for escalating difficulty
+(see Section \ref{tlx} for more information on difficulty scaling).
+
+If a wave has
+been completed and we have not reached our maximum number of pre-boss waves,
+we initialise a new wave and increment our wave counter - as well as spawning
+one of three potential in-game pick-ups to reward players between waves.
+
+If we have reached the final
+wave, we instead call a function to store our existing scenery in PICO-8 memory and
+make a load() call to run the cart containing our boss encounter (discussed below in
+Section \ref{boss}).
+
+After this logic has executed, and assuming we have not loaded the boss encounter
+cart, the game will run the update function of its current wave - either deriving
+the next frame's worth of activity for our current enemy wave, or else deriving the
+first frame's worth of activity for our newly initialised wave.
+
+We then update our player - taking and handling any user input, and testing for
+appropriate collisions - before finally managing our scenery, fired projectiles,
+and various spawned pick-ups.
+
+\subsubsection*{Updating the current enemy wave}
+
+The wave table's update() method can be broken down neatly into two sections: the first
+of which executes the specific behaviour of this class of wave, and the second of
+which executes generic updating tasks common to all types of enemy wave present in
+the game.
+
+At initialisation, a wave takes one one of four forms depending on the current
+game\textunderscore world wave counter. These four forms describe enemy waves in which,
+respectively, the incoming enemy ships: are saucers that move in a sweeping motion,
+are saucers that move in a circular motion, are saucers that move in a spreading motion,
+or are drone enemies who attack the player in a ``Kamikaze'' fashion.
+
+Once initialised - ie, once the newly created table has been set to one of these
+four modes, each with a unique internal update - the wave, once updated by the
+game\textunderscore world update() function, will call its own internal
+class\textunderscore update() method in order to execute the behaviour of one of
+the four subtypes. This largely consists of timer-based control over the spawn of
+enemies up to a limit.
+
+Once this class\textunderscore update() is complete, the wave table carries out
+more generalised hygiene on the enemies it contains.
+
+Firstly, the update() method iterates through the enemies it contains and
+checks whether or not they were marked as destroyed during the previous frame.
+If so, a new explosion is initiated at their current position and they are
+subsequently removed from the list of enemies - along with a point of score being
+awarded to the player and a simple explosion sound effect being called.
+
+Then, enemies are tested for position - if they have moved behind the viewport,
+they are considered off-screen and are removed from the wave's table of enemies.
+Since we define the behaviour of enemies and have determined that they move
+contrarywise to the player at all times, we can safetly assume that they will
+not return.
+
+We then iterate through the wave's table of ongoing explosions, and remove those
+that have expired (ie, their internal counter has reached zero).
+
+Once that has been done, we update first all of our enemies and then all of
+our explosions. The enemy update() function will be discussed below. The
+explosion update() function is significantly simpler and broadly executes
+the animation logic of progressive sprite expansion and quasi-random flipping
+outlined in Section \ref{conversion}.
+
+Once all enemies and explosions have been updated, we make a final check to
+see if the wave has been completed - that is, that the wave has persisted for
+more than 300 frames or ten seconds (the chosen time window across which a
+wave will spawn its enemies) and there are no enemies or explosions remaining.
+If so, the wave is marked as completed and the game\textunderscore world update()
+function will initialise a new one in the next frame as discussed above.
+
+\subsubsection*{Updating individual enemies}
 
 Discuss the update operations of individual enemies including bullet collision checks, movement, and
 timed firing. Discuss consequence of bullet collision, and creation of explosion objects - referring back
@@ -1010,11 +1374,38 @@ to prior section outlining the implementation of the explosion animation and par
 the decision to use sequential rather than simultaneous movement, its drawbacks, and its suitability for
 a video game system.\cite[p. 16]{ericson}
 
+\subsubsection*{Updating the player}
+
+Blah blah.
+
+\subsubsection*{Suitability of fixed step updating in PICO-8}
+
+As mentioned in Section \ref{pico}, one of the major advantages of PICO-8 as a development platform
+is its portability and low demands on hardware, virtually guaranteeing a stable rate of performance
+that effectively emulates the targetted compute power. As such, we are working with a relatively fixed
+frame budget and can program accordingly, eschewing more complex patterns intended to stabilise
+game persistence across multiple hardware configurations of differing capability.
+
+To quote former Electronic Arts developer Robert Nystrom\cite[p. 126]{nystrom}, ``few developers have
+the luxury of knowing exactly what hardware their game will run on. Instead, our games must intelligently
+adapt to a variety of devices.'' PICO-8 is very much an exception to this rule, since any reasonable
+hardware variation will not impact the game speed if properly budgeted, and as such approaches like
+variable time step updating or variable rendering are irrelevant to our concerns. Naive fixed-step updating
+is reasonable in this context, and more complex approaches would be over-engineered - in addition to eating
+valuable token space.
+
 Discuss player input scheme with particular reference to lock-on system.
 
 Discuss scenery, bullet, and pick-up management. Justify timing of bullet update and outline alternative
 approaches \cite{nystrom}.
-\subsubsection*{The draw loop}
+\subsection{The draw loop}
+
+Unlike the \textunderscore update() function, our drawing function contains two function calls - the first of which
+draws the game world in its entirety (which is the lion's share of the work) and the second of which
+draws a minimal Heads Up Display (HUD) over it, aligned to our player ship. We will discuss each on turn
+and also briefly discuss the lack of a need for a bespoke implementation of double frame buffering.
+
+\subsubsection*{Drawing the game world}
 Discuss the initial drawing of a flat surface using rectfill() and its population by scrolling scenery.
 Discuss the design decisions behind the use of trees, rocks, and clouds and their ability to be easily
 rotated without jarring consequence. Discuss positioning of scenery outside the effective range of
@@ -1035,11 +1426,70 @@ within the boss, allowing for the use of a hollow ``shell'' shape to enhance gam
 Discuss the use of recoloured sprites and semi-random sprite flipping to draw player thrusters
 with a dynamic quality.
 
-Discuss the in-game HUD. Trace its development from the initial software prototype, its brief
-abandonment, and its reintroduction following user testing feedback about the failure of players
-to engage with more traditional HUD elements on the borders of the display.
+% Discuss the in-game HUD. Trace its development from the initial software prototype, its brief
+% abandonment, and its reintroduction following user testing feedback about the failure of players
+% to engage with more traditional HUD elements on the borders of the display.
 
-\subsection{Boss mode}
+\subsubsection*{Drawing the HUD}
+
+After the game world has been ordered for depth and drawn as described above, the in-game Heads Up
+Display (HUD) is drawn over the scene. Two alternative approaches to designing this element were
+taken and the decision between them vacilated over the course of the project.
+
+The first and most obvious approach was to display pertinent information - such as player health,
+a target acquired count, and a lock-on cooldown - on the edges of the screen, as is traditional in
+many third person action games. At the end of the prototyping phase an alternative approach was
+briefly taken, in which information was displayed within the game world as an accompaniment to
+the player ship model. The initial implementation of this was misguided, and worked by projecting
+HUD elements along with the ship, creating rotational distortion that made the information difficult
+to read and distracting.
+
+Following reversion to a more traditional HUD, the decision was again taken to re-implement a
+HUD that followed the player ship - except this time drawn straightforwardly in screen space
+rather than projected with the ship itself. This decision was taken during think aloud user testing,
+during which several participants reported an inability or unwillingness to track peripheral
+information while focusing on the core aim-and-shoot activity of the game.
+
+\subsubsection*{A note on PICO-8 and double buffering}
+
+As discussed above with regards to the update loop and the viability of fixed-step updating given
+the performance profile of PICO-8, we also do not need to concern ourselves here with programming
+patterns that eliminate screen tearing and other graphical artefacts. PICO-8 uses a form of double
+buffering internally which produces smooth screen drawing without the developer needing to worry about
+bespoke implementation - all video memory is updated simultaneously at the conclusion of the
+in-built \textunderscore draw() function. As such, well understood patterns like double
+buffering\cite[p. 107]{nystrom} do not need to be re-implemented by the developer.
+
+\subsection{Transition to multi-cart design}\label{multicart}
+% Discuss late impact of token limit. Discuss decision to eschew imposed limitation of
+% PICO-8 and convert game to a multi-cart project. Discuss benefits of approach, including
+% introduction of straightforward game start/game over/restart logic based on storage of
+% pertinent persistent data and use of cart reloading. 
+
+One late decision taken, following an encounter with the token limit of a single PICO-8 cart
+in the development of the game's boss encounter (discussed below in Section \ref{boss}), was to
+split the game across multiple carts.
+
+The game is initially run through a main cart that contains the logic and data required to
+run the core gameplay loop outlined above. Once the final wave of normal gameplay is cleared,
+the game runs a load() and run() command on an additional cart containing the boss mode - which
+shares much data and functionality with the main game cart, but also strips out extraneous
+code describing certain enemy behaviours that don't appear in the boss encounter in favour of
+code describing the logic of the boss.
+
+% ELIMINATE IF CANNOT FIX IN GAME
+In order to ensure continuity between carts, certain data is stored in system storage before
+the load() and run() commands are run and then read by the new cart on initialisation, allowing
+the creation of consistent scenery density and placement between loads.
+
+% REWORK THIS PARAGRAPH SIGNIFICANTLY
+Furthermore, logic controlling the broader game system - such as restarts and game over screens -
+is outsourced to an additional cart for simplicity, avoiding the token burden of including this
+logic in the main cart and simplifying the procedure for restarting the game through cart reloading
+(with persistent state stored using PICO-8's in-built facilities) rather than through more
+comprehensive state resetting in code.
+
+\subsection{Boss mode}\label{boss}
 
 \begin{figure}[h]
 \begin{subfigure}{.5\textwidth}
@@ -1058,9 +1508,31 @@ to engage with more traditional HUD elements on the borders of the display.
 \label{fig:boss}
 \end{figure}
 
-Discuss thinking behind 3D boss design - with emphasis on opportunity to explore additional way to
-navigate 3D space with similar constraints to rail shooter genre. Compare to boss set-pieces in
-\textit{Panzer Dragoon} and \textit{Rez}.
+% Discuss thinking behind 3D boss design - with emphasis on opportunity to explore additional way to
+% navigate 3D space with similar constraints to rail shooter genre. Compare to boss set-pieces in
+% \textit{Panzer Dragoon} and \textit{Rez}.
+
+Having implemented a core gameplay loop executing on the basic gameplay of the rail shooter genre,
+development began on a climactic boss battle. Bosses in rail shooters have historically taken many
+forms and suggest multiple alternative approaches - here we will briefly consider a few early
+bosses from genre exemplars. 
+
+In \textit{Space Harrier}, the player is confronted with a dragon composed of multiple
+repeated sprites to represent a body, and a additional sprites to represent the head and the
+point of a tail. These sprites are drawn in different orders to represent backwards and forwards
+movement, and the player defeats the boss by inflicting repeated damage and reducing its size.
+
+In \textit{Panzer Dragoon}, a more complex set piece is established in which the player (riding a 
+dragon) navigates around a hostile ship in a circle - using camera controls discussed in Section
+\ref{genre} and attacking turrets and other discrete parts of the ship's body.
+
+In \textit{Rez}, the player circles around a spherical hollow shell composed of numerous discrete
+faces, which they must shoot open in order to attack a point within before the shell is rebuilt.
+
+In order to exploit built functionality for polygonal rendering and the rotation of polygonal
+models - previously reserved for rendering a player ship - it was decided to opt for a boss
+design more akin to \textit{Panzer Dragoon} and \textit{Rez} that worked on the principle of
+circular motion around a point and the progressive destruction of a shell.
 
 \subsubsection*{Camera rotations in 3D space}
 
@@ -1243,11 +1715,69 @@ that favoured game feel over accurate simulation.
 % load.
 
 \subsubsection*{Ray-triangle collision with the Möller–Trumbore algorithm}
-Discuss the need for more complex ray-triangle intersection computations to effectively
-test for collisions around the boss enemy, since the intended design requires per-face
-collision detection on a regular icosahedron whose faces cannot be satisfactorily
-split into non-overlapping cuboid bounding volumes that adequately approximate
-collisions.
+
+% Discuss the need for more complex ray-triangle intersection computations to effectively
+% test for collisions around the boss enemy, since the intended design requires per-face
+% collision detection on a regular icosahedron whose faces cannot be satisfactorily
+% split into non-overlapping cuboid bounding volumes that adequately approximate
+% collisions.
+
+Because the hollow boss enemy shell is composed of twenty triangles forming a regular icosahedron,
+and each of the individual triangles needed to be individually destructible, the simple hitbox
+approach outlined in Section \ref{conversion} was not sufficient to correctly model the intended
+behaviour of the game. As such a more complex collision detection algorithm was required, capable
+of handling collisions between moving points (in-game projectiles) and triangles in 3D space.
+
+The implementation of the collision detection algorithm is excerted in Figure \ref{fig:codemoller}, and is
+directly adapted from the C++ published in \cite{möller–trumbore}.
+
+\begin{figure}[h]
+   \begin{lstlisting}
+bullet_triangle_intersect = function(self, bullet, triangle)
+
+   epsilon = 0.0001
+
+   vert0 = self.current_vertices[triangle[1]]
+   vert1 = self.current_vertices[triangle[2]]
+   vert2 = self.current_vertices[triangle[3]]
+
+   edge1 = subtract(vert1, vert0)
+   edge2 = subtract(vert2, vert0)
+
+   pvec = cross_product({bullet.x_increment, bullet.y_increment, bullet.z_increment}, edge2)
+
+   det = dot_product(edge1, pvec)
+
+   -- only use non-culling branch from paper, since boss shell is hollow and can be shot through
+   if det > -epsilon and det < epsilon then return false end
+
+   inv_det = 1 / det
+
+   tvec = subtract({bullet.x, bullet.y, bullet.z}, vert0)
+   u = dot_product(tvec, pvec) * inv_det
+   if (u < 0 or u > 1) then return false end
+
+   qvec = cross_product(tvec, edge1)
+   v = dot_product({bullet.x_increment, bullet.y_increment, bullet.z_increment}, qvec) * inv_det
+   if (v < 0 or u + v > 1) then return false end
+
+   t = dot_product(edge2, qvec) * inv_det
+
+   if t <= 1 then return true else return false end
+
+end
+   \end{lstlisting}
+   \caption{Möller–Trumbore algorithm for ray-triangle intersections}
+   \label{fig:codemoller}
+\end{figure}
+
+One limitation of this approach is that projectiles are modelled as points in space rather than
+objects with volume, which is contrary to their handling in other game situations, but this
+inconsistency was accepted on the previously mentioned principle of ``if it feels right, it is
+right'', which is one of the advantages of working in non-critical real time applications -
+allowing us to eschew the additional overhead of performing this calculation for the eight vertices
+of a cuboid bounding volume, or implementing a more bespoke calculation that accurately tests for
+the collision of a triangle with any points on the surface of a sphere.
 
 \section{Results}
 \subsection{Think-aloud testing feedback}
@@ -1265,7 +1795,7 @@ discussion:
 Also discuss positive feedback gathered during sessions, such as satisfaction
 with the game controls, hit detection, and overall aesthetic of the game, and comfort
 with depth perception despite the low-resolution pixel grid.
-\subsection{Formal NASA-TLX testing}
+\subsection{Formal NASA-TLX testing}\label{tlx}
 I also subjected my programme to one round of quantitative testing to investigate the
 relative contributions of enemy speed and enemy fire rate to overall difficulty - as
 measured by task load.
@@ -1283,7 +1813,7 @@ TO DO: CALCULATE RESULTS OF NASA-TLX SURVEYS TAKEN ON 11/08
 
 
 \section{Evaluation}
-\subsection{Pitfalls of paper prototyping for 3D projects}
+\subsection{Pitfalls of paper prototyping for 3D projects}\label{prototypepitfalls}
 Discuss issues raised by developing initial software prototype from a paper prototype
 - with emphasis on inate tendancy of paper prototyping to flatten images to a surface,
 mask issues relating to depth-in-space, and discourage serious thinking about the
@@ -1302,7 +1832,36 @@ low-fi sound system - with equal recognition of creative limitations of develope
 
 
 \section{Further work}
+
+\subsection{Additional testing and mechanical pivots}
+% Discuss player disinterest in lock-on and possible alternative arrangements to test
+One persistent issue revealed in user testing, that was not adequately handled at the completion of
+the project as it exists, was player disinterest in using the given lock-on functionality.
+
+Resolution of this design issue could be informed by a round of additional testing, presenting
+alternative mechanics to the lock-on as currently implemented.
+
+One approach, which has the downside
+of reducing player agency, is to simply make lock-on mandatory for firing - which is the approach
+taken in \textit{Rez}, presumably so that the developer can exercise greater control over the timing
+of firing events and better syncronise diagetic sound to the game's techno score.
+
+An alternative approach would be to jettison the lock-on mechanic entirely, in the face of
+player disinterest, and replace it with an alternative behaviour for holding to fire - one
+suggestion, volunteered by a think-aloud tester, was to replace this mechanic with a weapon
+charging mechanic, allowing players to fire off more or less powerful free shots by holding
+the input for more or less time. This would pose the additional problem of either adding
+additional information to the HUD in order to illustrate charge level, or else to rely on
+player intuition and risk creating a false feeling of uncertainty.
+
 \subsection{Additional mode development}
+
+Following the switch to a multicart design late in the project, one obvious path for future
+development is the exploration of additional gameplay modes that were originally considered
+out of scope due to the token limit constraint that exists with single cart PICO-8 games.
+Here I will briefly discuss some game modes that could be straightforwardly implemented
+given functionality that has already been built to rotate our camera around arbitrary
+points in 3D space.
 
 \begin{figure}[h]
 \begin{subfigure}{.45\textwidth}
@@ -1322,18 +1881,30 @@ low-fi sound system - with equal recognition of creative limitations of develope
 \end{figure}
 
 \subsubsection*{Sideways chase}
-Discuss possibility of side-on scrolling action as seen in \textit{Panzer Dragoon} and \textit{Rez}.
-Discuss feasibility of implementation given multi-cart approach and existence of functionality to
-rotate camera around an arbitrary point.
+The first such mode would be a side-on mode in which the player continues to move forward
+through space but in which the camera now views the player side-on - changing player directional
+inputs from controlling direction in the \textit{x} and \textit{y} planes and instead giving
+limited control along \textit{z} and \textit{y}.
 
-IF TIME: BUILD RUDIMENTARY PROTOTYPE
+This player movement and camera set-up would be combined with an enemy approach along the
+\textit{z}-axis, on a parallel plane further along the \textit{x}-axis, resulting in gameplay
+broadly similiar to that found in the existing game - except with continuous motion now
+simulated along the screen rather than down it.
+
+This is broadly in line with the approach taken in \textit{Rez}, where scripted camera movements
+result in side-along gameplay and occasional enemy movement from the rear. Such gameplay also
+exists in \textit{Panzer Dragoon}, although it is initiated by the player - who can rotate the
+camera to four cardinal positions around the dragon using the Sega Saturn's shoulder inputs.
+
+Such an additional mode would highlight the three-dimensional nature of the game world and
+create a dynamic alternative to repeated enemy waves using the same camera set-up.
 
 \subsubsection*{Shmup mode}
 Brief explanation of shmups. Discuss affinity between rail shooters and shmups. Describe rail section
 of \textit{Split Fiction} and seamless transition between game modes. Discuss feasibility given
 existing codebase.
 
-\subsection{Change of technology}
+\subsection{Change of technology}\label{engines}
 
 As outlined in Section \ref{pico}, PICO-8 is an excellent prototyping tool. But it is inherently
 limited, and one obvious course of future work would be to translate the game to more robust technology
