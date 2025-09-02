@@ -67,7 +67,7 @@ game_world = {
             self.waves += 1
          else
             store_scenery() 
-            load("game/win.p8")
+            load("game/boss.p8")
          end
       end
       self.wave:update()

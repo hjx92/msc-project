@@ -141,10 +141,24 @@ throughout the project.
 
 \section{Introduction, aims, and objectives}
 
+The following project is a software implementation of a rail shooter, simulating a 3D 
+environment through the blended use of projected and scaled 2D sprites alongside
+limited real time polygonal rendering.
+
+In the course of this project report I will:
+
+\begin{itemize}
+   \item introduce the rail shooter as a genre of interactive software through a brief history and gameplay taxonomy;
+   \item introduce our chosen technology, the PICO-8 ``fantasy console'', and provide rationale for its selection;
+   \item walk through the process of implementation, including initial paper and software prototyping, developed 3D 
+   protoyping, and finally our final implementation - discussing, along the way, relevant technical issues like 
+   3D point projection, camera manipulation, and real time collision detection, as well as design decisions taken
+   with respect for technical constraints, genre conventions, and qualitative and quantitative user testing;
+   \item evaluate the work completed and sketch further work for future development of the project.
+\end{itemize}
+
 The project repo, including a standalone version of the game, is available on GitHub at 
 \url{https://github.com/hjx92/msc-project}
-
-[To be outlined and written after composition of rest of main body]
 
 
 \section{Background and context}
@@ -200,7 +214,7 @@ PlayStation 5, and Oculus Quest as \textit{Rez Infinite} with new VR modes.
 \end{subfigure}
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.8\linewidth]{placeholder}
+  \includegraphics[width=.8\linewidth]{star_fox}
   \caption{\textit{Star Fox} (1993)}
   \label{fig:sfig2}
 \end{subfigure}
@@ -536,7 +550,7 @@ allowing me to start getting to grips with the basic ideas behind real-time rend
 \begin{figure}[h]
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.8\linewidth]{placeholder}
+  \includegraphics[width=.8\linewidth]{paper_prototype}
   \caption{paper prototype}
   \label{fig:pfig1}
 \end{subfigure}
@@ -573,6 +587,10 @@ motion of projectiles in screen space between the player sprite and its reticle,
 motion of enemy projectiles towards the player, and the use of a lock-on mechanic akin to
 that implemented in \textit{Panzer Dragoon} and \textit{Rez}.
 
+Elements were also constructed to experiment with the naive simulation of a scrolling
+floor - using fixed white perspective lines on a filled rectangle supplemented by
+scrolling horizontal lines replicating the phenomenon of forward movement.
+
 Following construction of this rudimentary paper prototype, work began on a light software
 prototype describing the same basic game behaviours, as seen in \ref{fig:pfig2}, based on the
 use of PICO-8's drawing functions for primitive shapes - in this case, rect(), rectfill(),
@@ -606,7 +624,7 @@ need to start grappling with the design of a correct 3D system, in which objects
 in depth as well as along the axes of a screen. This phase of development will be discussed in
 Section \ref{conversion}.
 
-\subsubsection*{Simple 3D renderer with model scaling and rotations}
+\subsubsection*{Simple 3D renderer with model scaling and rotations}\label{renderer}
 
 % Describe the contruction of a simple 3D renderer to prove suitability of PICO-8 for
 % the proposed project. Expose and discuss my implementation of triangle rasterisation
@@ -683,20 +701,10 @@ outlines the results of the testing with backface culling enabled.
 % cubes do not exist unless they are drawn...
 
 \begin{figure}[h]
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=.8\linewidth]{placeholder}
-  \caption{single cube render}
-  \label{fig:3dfig1}
-\end{subfigure}
-\begin{subfigure}{.5\textwidth}
   \centering
   \includegraphics[width=.8\linewidth]{test3d}
   \caption{multi-cube sanity check}
   \label{fig:3dfig2}
-\end{subfigure}
-\caption{early prototyping}
-\label{fig:3dprototype}
 \end{figure}
 
 \begin{figure}[h]
@@ -725,6 +733,10 @@ properly scaled and perspective correct way instead of having movement in depth 
 arbitrary re-scaling in screen space. Likewise, collision handling was re-written to accurately detect
 intersections of bounding volumes in three-dimensional space, instead of being handled through
 screen space intersection in a 2D plane.
+
+Note at the outset: for the purposes of this project we are using a left-handed Cartsean coordinate
+system in which the positive \textit{x}-axis faces right, the positive \textit{y}-axis faces up, and
+the positive \textit{z}-axis faces forward.
 
 \subsubsection*{Perspective-correct 3D projection and scaling}
 % Discuss the application of 3D point projection to the corners of 2D sprite objects
@@ -1278,7 +1290,7 @@ functionality was carried over from the earlier 3D prototype.
     \label{fig:3dfinal}
 \end{figure}
 
-\subsection{The update loop}
+\subsection{The update loop}\label{update}
 
 \subsubsection*{Updating the gameworld}
 The given \textunderscore update() loop present in the main game file simply calls one
@@ -1294,7 +1306,7 @@ If the player has not died, control passes to logic that controls our current en
 wave. We will discuss the internal functioning of enemy waves below, but at a high level
 we check if a wave has been completed and, if so, adjust the global
 speed\textunderscore factor of the game as a naive tuner for escalating difficulty
-(see Section \ref{tlx} for more information on difficulty scaling).
+(see below for more information on difficulty scaling).
 
 If a wave has
 been completed and we have not reached our maximum number of pre-boss waves,
@@ -1314,6 +1326,48 @@ first frame's worth of activity for our newly initialised wave.
 We then update our player - taking and handling any user input, and testing for
 appropriate collisions - before finally managing our scenery, fired projectiles,
 and various spawned pick-ups.
+
+\subsubsection*{Speed scaling as a proxy for difficulty}
+
+Before continuing to discuss the update() method of the wave object, we should briefly discuss the use of
+a global speed\textunderscore factor variable to increment difficulty across a run of the game.
+
+NASA-TLX perceived workload testing\cite{nasa} was performed on five subjects to identify the effectivness of
+tweaking two aspects of game speed on perceived workload, taken here as a proxy for difficulty. The test
+was structured by asking players to complete a ten-wave run of the game on the default build of the game, on
+a version that was tweaked to scale enemy movement speed more rapidly than enemy fire rate, and a version that
+was tweaked to scale enemy fire rate more rapidly than enemy movement speed. The results are presented in tabular
+form in Figure \ref{tlx}. The three tasks were given in a random order to each participant to mitigate learning
+effects across the cohort.
+
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{r|c|c|c}
+      & Control build & Accelerated enemy speed & Accelerated enemy fire rate \\
+     \hline
+     P1 & 39 & 52 & 67 \\
+     P2 & 67 & 88 & 64 \\
+     P3 & 29 & 67 & 36 \\
+     P4 & 69 & 84 & 74 \\
+     P5 & 42 & 45 & 34 \\
+     \hline
+     Average & 49.2 & 67.2 & 55 \\
+\end{tabular}
+\end{center}
+\caption{Raw TLX scores for perceived workload across three different game builds}
+\label{fig:tlx}
+\end{figure}
+
+As expected, both forms of scaling presented greater perceived workload than the default build of
+the game on average - although both Participant 2 and Participant 5 found the fire rate augmented
+task less demanding than the default build of the game. No participant found less perceived
+workload in the movement augmented build than in the default build.
+
+Because both factors are shown to be, to some degree, effective levers of workload, the game
+maintained a uniform speed\textunderscore factor variable that controlled both in linear fashion,
+although data showing that enemy movement carries greater weight in setting difficulty than enemy
+fire rate could inform future work in creating more carefully calibrated user-selected difficulty
+settings for the game.
 
 \subsubsection*{Updating the current enemy wave}
 
@@ -1368,15 +1422,130 @@ function will initialise a new one in the next frame as discussed above.
 
 \subsubsection*{Updating individual enemies}
 
-Discuss the update operations of individual enemies including bullet collision checks, movement, and
-timed firing. Discuss consequence of bullet collision, and creation of explosion objects - referring back
-to prior section outlining the implementation of the explosion animation and particle effect. Discuss
-the decision to use sequential rather than simultaneous movement, its drawbacks, and its suitability for
-a video game system.\cite[p. 16]{ericson}
+The update() function of individual enemies can be broken down into four main steps: checking for
+player target locking, checking for collisions with projectiles, updating its position to simulate
+movement, and controlling its own firing routine.
+
+Firstly, target locking is handled in the enemy object in the course of ordinary gameplay by comparing
+the \textit{x} and \textit{y} positions of the enemy unit with the corresponding coordinates of the
+player - in essence, checking if the player is looking at the object down the \textit{z}-axis. If so,
+and if the player is holding fire (as ascertained through a flag that will be discussed below), we then
+handle logic for player locking - setting a locking flag and iterating down a lock\textunderscore frames
+counter that requires an object to be targeted for five frames before it is acquired as a locked-on
+target. If the counter reaches zero, the object is flagged as target\textunderscore locked and added to
+a list of acquired targets in the player. If, however, the enemy unit is not in locking scope, the locking
+flag is reset to false and the lock\textunderscore frames counter is reset to five.
+
+Secondly, collision detection is handled by iterating backwards through a list of bullets spawned into
+the gameworld, testing those whose source is the player (since we assume enemy units are immune to friendly
+fire), and handling the first collision we detect by setting a destroyed flag on the object (to be handled
+by the wave object next frame) and deleting the offending bullet from the game world. A break command is then
+used to ensure an enemy can only be flagged as destroyed once, and cannot despawn multiple colliding
+projectiles. The same basic structure also holds for collision detection with the player, which will be
+described below.
+
+Thirdly, the enemy updates its position according to a subclassed routine passed to the object on
+initialisation by the wave - describing the movement of either an enemy that spread, an enemy that circles,
+an enemy that sweeps, or the ``Kamikaze'' motion of a drone. Figure \ref{sweepupdate} exposes the code
+for the subclass routine of a sweeping enemy, for reference, and other update methods can be examined
+in the repository in the wave.lua file of the main game folder.
+
+\begin{figure}[h]
+   \begin{lstlisting}
+subclass_update = function(self)
+
+   if (self.x <= -1 and self.increment_x < 0) or (self.x >= 1 and self.increment_x > 0) then
+      self.increment_x = self.increment_x * -1
+      self.increment_y = self.increment_y * -1
+   end
+
+   self.x = self.x + (self.increment_x * game_world.speed_factor * speed_scale)
+   self.y = self.y + (self.increment_y * game_world.speed_factor * speed_scale)
+end
+   \end{lstlisting}
+   \caption{a sample update method for a subclass of enemies, showcasing sweeping movement}
+   \label{fig:sweepupdate}
+\end{figure}
+
+Finally, we execute logic that handles the enemy object's own firing routine. At object initialisation,
+a time\textunderscore to\textunderscore fire value is derived representing a random period between
+30 frames and 120 frames, in order to add an element of randomness to enemy attack. In the update()
+method, this is handled by incrementing a fire\textunderscore timer - augmented by a global
+speed\textunderscore factor that can make firing more rapid over time. 
+
+Once the timer is 30 frames away from the object's designated firing time, a change is made to the
+object's colour member to control a flashing light effect that will be discussed in Section \ref{draw},
+alerting the player to an incoming firing event.
+
+Once the timer reaches the designated moment to fire, an row of three projectiles is spawned
+from the enemy's position in world space in a quasi-random orientation, and appropriate book
+keeping is performed to reset the object's firing behaviour. The nature of an enemy shot can be
+seen in Figure \ref{fig:enemyfire}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.8\textwidth]{enemy_fire}
+    \caption{a close up of an enemy firing a row of projectiles, here spawned horizontally}
+    \label{fig:enemyfire}
+\end{figure}
 
 \subsubsection*{Updating the player}
 
-Blah blah.
+Unlike elements previously discussed, the player ship is directly controlled by the player through
+gamepad or keyboard inputs and is therefore the most directly interactive part of the game.
+
+As such, after first handling independent cooldown timers for both free firing and our lock-on mechanic,
+our player update() method first handles inputs using PICO-8's provided btn() function - which returns
+the current state of any of the six available inputs provided as a function parameter.
+
+There are two types of input in the game: directional input and face button input.
+
+Left and right
+directional input was originally handled as linear movement across the \textit{y}-axis in a 2D plane
+parallel to our camera viewport but, for reasons that will be discussed in Section \ref{boss}, this
+was later changed to an approach whereby horizontal inputs instead adjusted the player's angle
+in space with regards to a focal point along the \textit{z}-axis.
+
+In the boss encounter, movement to the
+edges of our screen will rotate the camera to accomodate free strafing movement, as will be discussed in
+Section \ref{boss}, but in the normal course of gameplay described here, the player remains confined to
+movement within the field of view of the viewport. If they have not reached the edge of the viewport's
+field of view, their angle of rotation with regard to the focal point of the map is incremented in the
+appropriate direction and a corresponding increment is applied the \textit{y}-axis rotation of the
+ship model to ensure the player ship will face the focal point of the map when rendered. In the course
+of normal gameplay, while the player is constrained by full 360 degree strafing, this is a subtle effect
+that primarily exists to visually reinforce the three-dimensionality of the ship. Upon completion of
+input handling, the \textit{x} and \textit{z} position of the player ship are recalculated on the basis 
+of its rotational relationship to the focal point of the map.
+
+Up and down directional input is handled more straightforwardly, moving the player up and down in world
+space without respect for any kind of focal point - but again bounded by the field of view of the
+camera. As with horizontal movement, small increments are made to the model's rotation around the
+\textit{x}-axis to simulate the ship's nose turning up or down by a small amount.
+
+Firing inputs are handled next, with A and B buttons treated agnostically. In this section of the
+code, we set a holding\textunderscore fire flag if either of these buttons is held. If either of the
+buttons is not held, but the holding\textunderscore fire flag is set, then we know a button has
+been released and handle the appropriate result - either spawning a single freely fired bullet
+if the player has not aquired any lock-on targets, or else spawning a projectile for each of 
+the player's aquired enemy targets, and in either case playing the relevant sound effect.
+
+Appropriate book-keeping is then performed - including the resetting of the holding\textunderscore fire
+flag (and, if targets were acquired, the has\textunderscore target flag) and triggering the appropriate
+free fire or lock-on targetting cooldown.
+
+We then have a branch that updates a recently\textunderscore hit timer if a flag for this state
+is active. If this flag is active, and remains active after the iteration of this timer, it is
+not vulnerable to hostile collisions.
+
+Collision checking is the final part of the player update() method, checking for collisions with
+enemy-spawned bullets, enemy bodies, and in-game pickups respectively - handling the required
+consequence of collision for each (namely damage for collisions with projectiles and enemies, and
+the application of some benefit in the case of collision with a pick-up).
+
+The structure of the collision
+checks is broadly as described in the above section on the enemy update() method, and executes on 
+the bespoke divide and conquer strategy for collision detection mentioned in Section \ref{conversion}.
 
 \subsubsection*{Suitability of fixed step updating in PICO-8}
 
@@ -1394,11 +1563,7 @@ variable time step updating or variable rendering are irrelevant to our concerns
 is reasonable in this context, and more complex approaches would be over-engineered - in addition to eating
 valuable token space.
 
-Discuss player input scheme with particular reference to lock-on system.
-
-Discuss scenery, bullet, and pick-up management. Justify timing of bullet update and outline alternative
-approaches \cite{nystrom}.
-\subsection{The draw loop}
+\subsection{The draw loop}\label{draw}
 
 Unlike the \textunderscore update() function, our drawing function contains two function calls - the first of which
 draws the game world in its entirety (which is the lion's share of the work) and the second of which
@@ -1406,25 +1571,83 @@ draws a minimal Heads Up Display (HUD) over it, aligned to our player ship. We w
 and also briefly discuss the lack of a need for a bespoke implementation of double frame buffering.
 
 \subsubsection*{Drawing the game world}
-Discuss the initial drawing of a flat surface using rectfill() and its population by scrolling scenery.
-Discuss the design decisions behind the use of trees, rocks, and clouds and their ability to be easily
-rotated without jarring consequence. Discuss positioning of scenery outside the effective range of
-play, and why this makes it appropriate to draw static scenery first.
+% Discuss the initial drawing of a flat surface using rectfill() and its population by scrolling scenery.
+% Discuss the design decisions behind the use of trees, rocks, and clouds and their ability to be easily
+% rotated without jarring consequence. Discuss positioning of scenery outside the effective range of
+% play, and why this makes it appropriate to draw static scenery first.
 
-Discuss the use of the z-sort algorithm to correctly order sprites and polygonal objects
-for correct ordering by depth. 
+We start drawing the game world by first filling the screen with the colour of our sky, and then 
+drawing a filled beige rectangle to represent the floor of our scene. In earlier iterations of the
+prototype, additional primitives were hypothecated and drawn to represent the scrolling of this floor,
+but this was deemed unncessary once the floor and sky were populated with static scenery.
 
-Refer to earlier 3D projection discussion and discuss how this is used as the foundation for
-spriteobject level draw calls that use object-level sprite-sheet data.
+Once the floor has been drawn, the game\textunderscore world object gathers all objects that need to be
+drawn into a single table and sorts them by their \textit{z}-coordinate value using a simple, stable
+merge sort. This is necessary to ensure the correct ordering of objects in space - although objects
+are scaled appropriately using the point projection logic outlined in Section \ref{conversion}, it
+is important to ensure they are then drawn in the correct order so that nearer objects - in addition
+to scaling larger - are also drawn in front of more distant object that they can and should occlude in
+part or in whole.
 
-Discuss the use of pal() calls to simulate lights and rotary blades in the saucer and drone
-enemies.
+% Discuss the use of the z-sort algorithm to correctly order sprites and polygonal objects
+% for correct ordering by depth. 
 
-Discuss the use of backface culling for the player ship and the decision to draw backfaces
-within the boss, allowing for the use of a hollow ``shell'' shape to enhance gameplay.
+Once the objects are sorted by depth, this table is iterated through in the correct order and the
+drawing of individual objects is handled autonomously based on whether it inherits functionality
+from the sprite\textunderscore object or polygonal\textunderscore object subclass of our
+base game\textunderscore object prototype.
 
-Discuss the use of recoloured sprites and semi-random sprite flipping to draw player thrusters
-with a dynamic quality.
+The details of our sprite projection procedure have been outlined in Section \ref{conversion} and
+form the basis of the sprite\textunderscore object draw method - projecting points to find the
+extreme corners of a sprite's projection, and then drawing using a given sspr() call that takes,
+as its parameters, these extreme corners in screen space and relevant data - held by the object to
+be drawn - about the area of the PICO-8 sprite sheet to be scaled and drawn.
+
+Additional techniques such as explosion animations (discussed in Section \ref{conversion}) and the
+use of the palette replacement function pal() to simulate the lighting up of an enemy saucer (briefly
+discussed in Section \ref{update}) are executed, as appropriate, in the individual polymorphic draw() 
+functions of the individual objects, in addition to the inherited behaviour of sprites.
+
+% Refer to earlier 3D projection discussion and discuss how this is used as the foundation for
+% spriteobject level draw calls that use object-level sprite-sheet data.
+
+\subsubsection*{Drawing the player ship}
+
+The player ship is unique in the course of the main game in being a polygonal object, and being
+rendered primarily using triangles rather than sprites - using the 3D model representation and
+rendering logic discussed in Section \ref{renderer}.
+
+As with sprite objects, the triangles forming a polygonal model are projected onto the screen at their
+corners and then drawn using the triangle rendering functionality discussed in Section \ref{renderer}. Since
+the player ship is a convex object without destrucible surfaces, backface culling is used in this
+instance to prevent unnecessary rendering of non-visible faces.
+
+In the spirit of a blended approach to rendering, the polygonal rendering system implemented here 
+also allows the developer opportunities to define pre-, post-, and mid-rendering sprite drawing to
+augument the model with sprite-based elements.
+
+In the case of the player ship, there is a sprite-based
+cockpit atop the craft that depicts the player character with a helmet - this is drawn either before
+or after the rendering of the polygonal ship model, depending on the rotation of the ship around the
+\textit{x}-axis (ie if it is facing down or up, which determines whether or not the cockpit will or
+will not be occluded by the rear of the polygonal model).
+
+Likewise, a post-process effect is added after the polygonal model is rendered, depicting blue
+animated thrusters to enhance the illusion of movement. These are animated on a similar principle
+to the explosion animations discussed in Section \ref{conversion}, and use the same sprites as
+the enemy explosions too - simply recoloured using the palette swapping function pal() mentioned
+earlier.
+
+These two sprite-based effects are depicted in more detail in Figure \ref{fig:ship}.
+
+% Discuss the use of pal() calls to simulate lights and rotary blades in the saucer and drone
+% enemies.
+
+% Discuss the use of backface culling for the player ship and the decision to draw backfaces
+% within the boss, allowing for the use of a hollow ``shell'' shape to enhance gameplay.
+
+% Discuss the use of recoloured sprites and semi-random sprite flipping to draw player thrusters
+% with a dynamic quality.
 
 % Discuss the in-game HUD. Trace its development from the initial software prototype, its brief
 % abandonment, and its reintroduction following user testing feedback about the failure of players
@@ -1449,6 +1672,26 @@ HUD that followed the player ship - except this time drawn straightforwardly in 
 rather than projected with the ship itself. This decision was taken during think aloud user testing,
 during which several participants reported an inability or unwillingness to track peripheral
 information while focusing on the core aim-and-shoot activity of the game.
+
+In order to achieve this, we project the player's position in world space onto the screen and then draw
+the HUD naively around this point, without regard for the various projections of the player ship model's
+vertices. The HUD is drawn using a range of primitive draw calls for - short height rect() calls for
+player life and player lock cooldown, and circfill() calls for the player lock count indicator.
+
+The HUD is depicted in Figure \ref{fig:ship}, showing a health bar, a lock-on cooldown bar with an
+inactive cooldown, and
+a single greyed pixel to represent an unused lock-on - with the number of pixels growing as the
+player increased their target limit over the course of the game through pick-ups.
+
+Finally, in addition to player vitals, less immediately relevant information - namely the top
+score and current score - are printed unobtrusively in the top left hand of the screen.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.8\textwidth]{hud}
+    \caption{a close up of the player ship, depicting its rear thrusters and the HUD}
+    \label{fig:ship}
+\end{figure}
 
 \subsubsection*{A note on PICO-8 and double buffering}
 
@@ -1500,7 +1743,7 @@ comprehensive state resetting in code.
 \end{subfigure}\hfill
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.8\linewidth]{placeholder}
+  \includegraphics[width=.8\linewidth]{boss_gameplay}
   \caption{boss mode gameplay}
   \label{fig:bossfig2}
 \end{subfigure}\hfill
@@ -1553,7 +1796,7 @@ in this mode are accomplished by transforming world scenery to simulate the move
 
 In this example, to rotate objects in a scene around an arbitrary point, the objects are
 translated by the inverse of the position vector of the point of rotation, rotated around
-origin, and translated by by the positive position vector of the initial point.
+origin, and translated back by the positive position vector of the initial point.
 
 As implemented in the game, this means that objects in the game world are rotated around
 the position of the boss - at coordinates (0, 0, 5) - in the opposite direction to the
@@ -1728,8 +1971,14 @@ approach outlined in Section \ref{conversion} was not sufficient to correctly mo
 behaviour of the game. As such a more complex collision detection algorithm was required, capable
 of handling collisions between moving points (in-game projectiles) and triangles in 3D space.
 
+The Möller–Trumbore algorithm for ray-triangle intersections was selected, as an efficient and well
+understood approach to solving this issue which does not require prior preparation of the triangles
+to be inspected (and thus avoids the token overhead an alternative approach may require).
+The implementation of this algorithm fit comfortably in the frame budget of the game, despite
+several calls to relatively expensive linear algebraic functions.
+
 The implementation of the collision detection algorithm is excerted in Figure \ref{fig:codemoller}, and is
-directly adapted from the C++ published in \cite{möller–trumbore}.
+directly adapted from the C++ published by Möller and Trumbore in \cite{möller–trumbore}.
 
 \begin{figure}[h]
    \begin{lstlisting}
@@ -1813,11 +2062,26 @@ TO DO: CALCULATE RESULTS OF NASA-TLX SURVEYS TAKEN ON 11/08
 
 
 \section{Evaluation}
+
 \subsection{Pitfalls of paper prototyping for 3D projects}\label{prototypepitfalls}
-Discuss issues raised by developing initial software prototype from a paper prototype
-- with emphasis on inate tendancy of paper prototyping to flatten images to a surface,
-mask issues relating to depth-in-space, and discourage serious thinking about the
-relationship between world-space and screen-space in projects like this.
+
+The paper prototype did succeed in distilling the core aim, target, and shoot mechanics
+of the core game loop, and various aspects of the design that were jettisoned - such as
+the upright player sprite and the faked scrolling of the ground - were largely cosmetic.
+
+But while it distilled the core elements of the game successfully, there was a sense in
+which the prototype was also unhelpful. Because of the flat and fundamentally two-dimensional
+nature of a rudimentary paper prototype, the developer is encouraged to consider the
+problems posed by the project in a two-dimensional way. As such, much of the initial prototyping
+phase was not as productive as it might otherwise be, since the underlying thinking about
+projecting and operating with regard to 3D space was elided.
+
+Although it had some utility in terms of encouraging thinking about game feel and anticipating
+design concerns that were not significantly impacted by the 3D environment - for example, about
+the introduction of limits to the lock-on capability - it also spent up a lot of development time
+building functionality that ultimately had to be fundamentally rethought and reimplemented to
+accomodate the 3D ambitions of the project.
+
 \subsection{Artificial limits imposed by featly to platform ethos}
 Discuss late move to multicart approach and the creative envelope it opened - too late
 in the project. Discuss attempts to remain within arbitrary token limit for much of the
@@ -1834,7 +2098,9 @@ low-fi sound system - with equal recognition of creative limitations of develope
 \section{Further work}
 
 \subsection{Additional testing and mechanical pivots}
-% Discuss player disinterest in lock-on and possible alternative arrangements to test
+
+Two areas of the game design would clearly benefit from additional testing.
+
 One persistent issue revealed in user testing, that was not adequately handled at the completion of
 the project as it exists, was player disinterest in using the given lock-on functionality.
 
@@ -1844,15 +2110,32 @@ alternative mechanics to the lock-on as currently implemented.
 One approach, which has the downside
 of reducing player agency, is to simply make lock-on mandatory for firing - which is the approach
 taken in \textit{Rez}, presumably so that the developer can exercise greater control over the timing
-of firing events and better syncronise diagetic sound to the game's techno score.
+of firing events and better syncronise diagetic sound to the game's electronic score.
 
 An alternative approach would be to jettison the lock-on mechanic entirely, in the face of
 player disinterest, and replace it with an alternative behaviour for holding to fire - one
 suggestion, volunteered by a think-aloud tester, was to replace this mechanic with a weapon
 charging mechanic, allowing players to fire off more or less powerful free shots by holding
-the input for more or less time. This would pose the additional problem of either adding
+the input for more or less time.
+
+This would pose the additional problem of either adding
 additional information to the HUD in order to illustrate charge level, or else to rely on
-player intuition and risk creating a false feeling of uncertainty.
+player intuition and risk creating a false feeling of uncertainty. It would also require
+the health of enemies to be rethought - they are currently killed on impact with
+a player projectile, whereas a more complex approach to health would need to be devised
+to accomodate player projectiles of varied strength.
+
+A second subject for testing would be the boss encounter in its entirety. Because of its late
+development in the project, it was not properly tested either in qualitative think aloud sessions
+or in quantitative evaluation, and thus it has not been possible to effectively evaluate it 
+in use. As such, it is not known if the encounter places excessive load on the player by 
+combining a strafing chase for a weak surface with free firing and hostile enemy targets, and
+if this load can be alleviated by tweaking levels of speed or enemy density.
+
+Likewise, it is not known if players will intuitively understand how the boss works and what
+they are expected to do, or - if they do - whether they understand that the boss rotates in a 
+predictable pattern that allows you to efficiently take shots by remaining in the a position
+that sees the weak face routinely pass.
 
 \subsection{Additional mode development}
 
@@ -1925,7 +2208,20 @@ off-the-shelf game engines.
 
 
 \section{Conclusion}
-[To be outlined and written after composition of rest of main body]
+At the end of this project, a fairly complete slice of gameplay has been built - including
+a core rail shooter gameplay loop featuring a variety of enemy patterns, alternative free
+firing and lock-on firing modes, a boss encounter set piece, 
+accurate 3D perspective projection for both sprites  and polygonal models,
+and real-time collision detection for cuboid bounded volumes and
+more complex ray-triangle intersections.
+
+Development has been constrained (as intended due to project scope) by the known
+system constraints of our chosen technology, the ``fantasy console'' PICO-8. However,
+we have also seen how it was ultimately constrained to an unnecessary degree by
+an arbitrary sense of fealty to the technology's founding ethos despite known
+mitigations for that particular constraint - namely, the constraint imposed by
+per-cart token limits and the ability to work around them by daisy-chaining
+carts containing different gameplay sections.
 
 \printbibliography
 

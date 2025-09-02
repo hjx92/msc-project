@@ -56,7 +56,7 @@ wave = {
 
          class_update = function(self)
 
-            --[[
+            
             if self.timer <= 301 then self.timer = self.timer + 1
             else self.timer = 0 end
             if self.timer % 30 == 0 and #self.enemies < 5 then
@@ -65,7 +65,6 @@ wave = {
                add(self.enemies, enemy:new(temp))
             end
 
-            ]]
          end
 
       }

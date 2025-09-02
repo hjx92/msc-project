@@ -174,6 +174,10 @@ boss = {
       num = flr(rnd(self.available_faces - 1)) + 1
       count = 1
 
+      if self.available_faces <= 0 then
+         load("game/win.p8")
+      end
+
       for i = 1, #self.triangles do
          if self.triangles[i][5] then
             if num == count then

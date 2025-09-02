@@ -256,7 +256,7 @@ player = {
       normalised_angle = self.angle - 0.25
       diff_from_world = normalised_angle - game_world.rotation
 
-      -- MAGIC NUMBER: ~0.07 DEGREES IS THE FIELD OF VIEW OF A CAMERA WITH FOCAL LENGTH 1 AND SCREEN HEIGHT AND WIDTH OF 1
+      -- MAGIC NUMBERS: ~0.07 DEGREES IS THE FIELD OF VIEW OF A CAMERA WITH FOCAL LENGTH 1 AND SCREEN HEIGHT AND WIDTH OF 1
 
       if (btn(0, 0) and diff_from_world < 0.06) then
          self.angle += 0.005
