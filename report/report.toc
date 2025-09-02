@@ -4,23 +4,20 @@
 \contentsline {subsection}{\numberline {2.2}PICO-8}{7}{}%
 \contentsline {section}{\numberline {3}Implementation I: Prototyping}{11}{}%
 \contentsline {subsection}{\numberline {3.1}Paper prototyping, software prototyping, and 3D rendering test}{11}{}%
-\contentsline {subsection}{\numberline {3.2}3D conversion of software prototype}{13}{}%
+\contentsline {subsection}{\numberline {3.2}3D conversion of software prototype}{14}{}%
 \contentsline {section}{\numberline {4}Implementation II: Full implementation}{20}{}%
 \contentsline {subsection}{\numberline {4.1}Settled software architecture and object hierarchy}{20}{}%
 \contentsline {subsection}{\numberline {4.2}The core game loop}{21}{}%
 \contentsline {subsection}{\numberline {4.3}The update loop}{21}{}%
 \contentsline {subsection}{\numberline {4.4}The draw loop}{27}{}%
 \contentsline {subsection}{\numberline {4.5}Transition to multi-cart design}{30}{}%
-\contentsline {subsection}{\numberline {4.6}Boss mode}{30}{}%
-\contentsline {section}{\numberline {5}Results}{33}{}%
-\contentsline {subsection}{\numberline {5.1}Think-aloud testing feedback}{33}{}%
-\contentsline {subsection}{\numberline {5.2}Formal NASA-TLX testing}{33}{}%
-\contentsline {section}{\numberline {6}Evaluation}{33}{}%
-\contentsline {subsection}{\numberline {6.1}Pitfalls of paper prototyping for 3D projects}{33}{}%
-\contentsline {subsection}{\numberline {6.2}Artificial limits imposed by featly to platform ethos}{34}{}%
-\contentsline {subsection}{\numberline {6.3}Unavoidable limitations imposed by PICO-8}{34}{}%
-\contentsline {section}{\numberline {7}Further work}{34}{}%
-\contentsline {subsection}{\numberline {7.1}Additional testing and mechanical pivots}{34}{}%
-\contentsline {subsection}{\numberline {7.2}Additional mode development}{35}{}%
-\contentsline {subsection}{\numberline {7.3}Change of technology}{35}{}%
-\contentsline {section}{\numberline {8}Conclusion}{36}{}%
+\contentsline {subsection}{\numberline {4.6}Boss mode}{31}{}%
+\contentsline {section}{\numberline {5}Results and evaluation}{33}{}%
+\contentsline {subsection}{\numberline {5.1}Testing feedback}{33}{}%
+\contentsline {subsection}{\numberline {5.2}Pitfalls of paper prototyping for 3D projects}{34}{}%
+\contentsline {subsection}{\numberline {5.3}Artificial limits imposed by featly to platform ethos}{34}{}%
+\contentsline {section}{\numberline {6}Further work}{35}{}%
+\contentsline {subsection}{\numberline {6.1}Additional testing and mechanical pivots}{35}{}%
+\contentsline {subsection}{\numberline {6.2}Additional mode development}{35}{}%
+\contentsline {subsection}{\numberline {6.3}Change of technology}{36}{}%
+\contentsline {section}{\numberline {7}Conclusion}{37}{}%
